@@ -1,47 +1,47 @@
 # GPBench
 
-GPBench 是一个面向基因组预测（genomic prediction）的对比基准工具箱。该仓库重新实现并整合了众多常用方法，包含经典线性统计法与机器学习/深度学习方法：rrBLUP、GBLUP、BayesA/B/C、SVR、Random Forest、XGBoost、LightGBM、DeepGS、DL_GWAS、DNNGP、SoyDNGP、DeepCCR、EIR、Cropformer、GEFormer、CropARNet 等。
+GPBench is a benchmarking toolkit for genomic prediction. This repository reimplements and integrates many commonly used methods, including classic linear statistical approaches and machine learning / deep learning methods: rrBLUP, GBLUP, BayesA/B/C, SVR, Random Forest, XGBoost, LightGBM, DeepGS, DL_GWAS, DNNGP, SoyDNGP, DeepCCR, EIR, Cropformer, GEFormer, CropARNet, etc.
 
-## 主要特性
-- 提供多种基因组预测方法的实现与可复现实验流程
-- 支持 GPU 加速的深度学习方法（使用 PyTorch）
-- 统一的数据读取与 10 折交叉验证流程
-- 输出标准化的评估指标（PCC、MAE、MSE、R2）与每折预测结果
+## Key Features
+- Implements multiple genomic prediction methods and reproducible experimental workflows
+- Supports GPU-accelerated deep learning methods (using PyTorch)
+- Unified data loading and 10-fold cross-validation pipeline
+- Outputs standardized evaluation metrics (PCC, MAE, MSE, R2) and per-fold predictions
 
-## 目录结构（重要部分）
-- `data/`：示例/真实数据集目录，每个物种/数据集为一个子文件夹（例如 `data/Cotton/`），其中包含：
-	- `genetype.npz`：基因型矩阵（通常为 numpy 保存的数组）
-	- `phenotype.npz`：表型数据（包含表型矩阵与表型名称）
-- `method/`：各方法实现子目录（每个方法通常含主运行脚本与超参数/辅助脚本）
-- `result/`：默认的实验结果输出目录
-- `environment.yml`：用于创建 conda 环境的依赖文件（推荐使用）
+## Important Structure
+- `data/`: Example/real dataset directory, each species/dataset is a subfolder (e.g., `data/Cotton/`), containing:
+	- `genetype.npz`: genotype matrix (typically saved as a NumPy array)
+	- `phenotype.npz`: phenotype data (contains phenotype matrix and phenotype names)
+- `method/`: subdirectories with implementations for each method (each method usually contains a main runner script plus hyperparameter/utility scripts)
+- `result/`: default output directory for experimental results
+- `environment.yml`: dependency file for creating a conda environment (recommended)
 
-## 环境安装（推荐：conda）
-仓库中已有 `environment.yml`，建议直接用它创建并激活 conda 环境：
+## Environment Setup (recommended: conda)
+There is an `environment.yml` in the repository; it is recommended to create and activate a conda environment with it:
 
 ```bash
-# 在有 conda 的机器上：
+# On a machine with conda:
 conda env create -f environment.yml
 conda activate Benchmark
 ```
 
-说明：
-- `environment.yml` 已包含大部分依赖（含 CUDA / cuDNN 相关包与 pip 列表），适用于带 GPU 的环境（文件内使用的是 CUDA 11.8 与对应的 RAPIDS/torch/cupy 版本）。
-- 请确保目标机器已安装匹配的 NVIDIA 驱动（与 CUDA 11.8/12 系列兼容）。
-- 如果无法直接用该 environment 文件，可以在已有 Python 环境中按需安装主要依赖：
+Notes:
+- `environment.yml` contains most dependencies (including CUDA / cuDNN related packages and pip list) and is suitable for GPU-enabled environments (the file references CUDA 11.8 and matching RAPIDS/torch/cupy versions).
+- Ensure the target machine has an NVIDIA driver compatible with CUDA 11.8/12.
+- If you cannot use the environment file directly, you can install main dependencies into an existing Python environment as needed:
 
 ```bash
 pip install -U numpy pandas scikit-learn torch torchvision optuna psutil xgboost lightgbm
 ```
 
-（注意：上述为简化安装，某些包在 GPU 环境或特定平台需要额外配置）
+(Warning: the above is a simplified installation; some packages may need additional configuration on GPU systems or certain platforms.)
 
-## 数据格式与准备
-- 每个 species 文件夹应包含 `genetype.npz` 与 `phenotype.npz`。
-- `genetype.npz` 中通常保存一个二维数组（样本数 × SNP 数）。
-- `phenotype.npz` 通常包含两个数组：表型矩阵（样本数 × 表型数）与表型名称列表。
+## Data Format and Preparation
+- Each species folder should contain `genetype.npz` and `phenotype.npz`.
+- `genetype.npz` usually stores a 2D array (number of samples × number of SNPs).
+- `phenotype.npz` typically includes two arrays: the phenotype matrix (number of samples × number of phenotypes) and a list of phenotype names.
 
-快速查看某个数据集的表型名称（以 `Cotton` 为例）：
+Quickly view phenotype names for a dataset (e.g., `Cotton`):
 
 ```bash
 python - <<'PY'
@@ -51,14 +51,14 @@ print(obj['arr_1'])
 PY
 ```
 
-## 快速开始（以某个方法为例）
-大多数方法在 `method/<Method>/` 下有一个主脚本，脚本通常接收参数：`--methods`、`--species`、`--phe`、`--data_dir`、`--result_dir` 等。示例如下：
+## Quick Start (example with a method)
+Most methods have a main script under `method/<Method>/`. Scripts usually accept parameters like `--methods`, `--species`, `--phe`, `--data_dir`, `--result_dir`, etc. Example:
 
 ```bash
-# 1) 激活环境
+# 1) Activate the environment
 conda activate Benchmark
 
-# 2) 以 DeepCCR 为例运行单个表型（注意：--species 后面包含目录名末尾的斜杠）
+# 2) Run a single phenotype with DeepCCR (note: include trailing slash after --species)
 python method/DeepCCR/DeepCCR.py \
 	--methods DeepCCR/ \
 	--species Cotton/ \
@@ -67,34 +67,34 @@ python method/DeepCCR/DeepCCR.py \
 	--result_dir result/
 ```
 
-常见可选参数（不同脚本可能略有不同）：
-- `--epoch`：训练轮数（默认示例脚本里通常为 1000）
-- `--batch_size`：批大小
-- `--lr`：学习率
-- `--patience`：早停等待轮数
+Common optional arguments (may vary across scripts):
+- `--epoch`: number of training epochs (example scripts often default to 1000)
+- `--batch_size`: batch size
+- `--lr`: learning rate
+- `--patience`: early stopping patience
 
-可以在对应方法目录下查看该脚本的 `argparse` 帮助，得到完整参数：
+You can inspect the argparse help for the specific script in the method directory:
 
 ```bash
 python method/DeepCCR/DeepCCR.py -h
 ```
 
-## 输出说明
-- 每次运行会在 `result/` 下创建以方法/物种/表型命名的目录，例如 `result/DeepCCR/Cotton/<PHENO>/`。
-- 每折的预测结果通常保存为 `fold{n}.csv`，其中包含 `Y_test` 与 `Y_pred` 列。
-- 脚本运行结束会打印或保存平均评估指标：PCC（Pearson correlation coefficient）、MAE、MSE、R2 及运行时间与内存/GPU 使用情况。
+## Output Description
+- Each run creates a directory under `result/` named by method/species/phenotype, e.g., `result/DeepCCR/Cotton/<PHENO>/`.
+- Per-fold prediction results are typically saved as `fold{n}.csv`, containing `Y_test` and `Y_pred` columns.
+- The script prints or saves average evaluation metrics at the end: PCC (Pearson correlation coefficient), MAE, MSE, R2, along with runtime and memory/GPU usage.
 
-## 完整数据集链接
-- [Species](https://drive.google.com/file/d/1-y71y9-y6-y9-)：包含 16 个物种的基因型与表型数据。
+## Full Dataset Link
+- [Species dataset](https://doi.org/10.6084/m9.figshare.31007608): contains genotype and phenotype data for 16 species.
 
-## 运行提示与常见问题
-- 若使用 GPU，请确保 `conda activate Benchmark` 后 CUDA 驱动可用，且 `torch.cuda.is_available()` 返回 True。
-- 对于内存或 GPU 显存不足，可尝试减小 `--batch_size` 或在脚本中禁用某些并行设置。
-- 若使用 CPU 执行（无 GPU），某些方法（RAPIDS 或 GPU 专用实现）可能不可用或需要替代实现。
+## Running Tips & Troubleshooting
+- For GPU usage, ensure `conda activate Benchmark` and that CUDA drivers are available; `torch.cuda.is_available()` should return True.
+- If you encounter memory or GPU OOM issues, try reducing `--batch_size` or disabling some parallel settings in scripts.
+- If running on CPU-only systems, some GPU-specific methods (RAPIDS or GPU-only implementations) may be unavailable or require alternative implementations.
 
-## 贡献 & 联系
-- 欢迎提交 issue 与 PR。请在 PR 中说明更改目的与测试方式。
-- 联系方式：在仓库 `Issues` 中留言或联系仓库所有者（GitHub 用户名：`xwzhang2118`）。
+## Contributing & Contact
+- Contributions via issues and PRs are welcome. Please describe changes and testing in PRs.
+- Contact: open an Issue in the repository or reach the repository owner (GitHub user: `xwzhang2118`).
 
 
 
