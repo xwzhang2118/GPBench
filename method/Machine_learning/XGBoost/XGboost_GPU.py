@@ -11,7 +11,7 @@ import pynvml
 from sklearn.model_selection import KFold
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from scipy.stats import pearsonr
-import XGboost_GPU_he
+import XGboost_Hyperparameters
 
 
 def parse_args():
@@ -163,7 +163,7 @@ if __name__ == "__main__":
             label = Y[:, j]
             label = np.nan_to_num(label, nan=np.nanmean(label))
 
-            best_params = XGboost_GPU_he.main(X, label)
+            best_params = XGboost_Hyperparameters.main(X, label)
             args.learning_rate =best_params['learning_rate']
             args.n_estimators = best_params['n_estimators']
             args.max_depth = best_params['max_depth']

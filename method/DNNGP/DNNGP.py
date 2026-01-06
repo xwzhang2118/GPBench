@@ -11,7 +11,7 @@ from base_dnngp import DNNGP
 from scipy.stats import pearsonr
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from torch.utils.data  import DataLoader, TensorDataset
-import DNNGP_he as DNNGP_he
+import DNNGP_Hyperparameters
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Argument parser")
@@ -137,7 +137,7 @@ if __name__ == "__main__":
             print("starting run " + args.methods + args.species + args.phe)
             label = Y[:, j]
             label = np.nan_to_num(label, nan=np.nanmean(label))
-            best_params = DNNGP_he.main(X, label, nsnp)
+            best_params = DNNGP_Hyperparameters.main(X, label, nsnp)
             args.learning_rate = best_params['learning_rate']
             args.patience = best_params['patience']
             args.dropout1 = best_params['dropout1']

@@ -11,7 +11,7 @@ from base_deepgs import DeepGS
 from scipy.stats import pearsonr
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from torch.utils.data  import DataLoader, TensorDataset
-import DeepGS_he
+import DeepGS_Hyperparameters
 import pynvml
 
 def parse_args():
@@ -146,7 +146,7 @@ if __name__ == "__main__":
             print("starting run " + args.methods + args.species + args.phe)
             label = Y[:, i]
             label = np.nan_to_num(label, nan=np.nanmean(label))
-            best_params = DeepGS_he.main(X, label, nsnp)
+            best_params = DeepGS_Hyperparameters.main(X, label, nsnp)
             args.learning_rate = best_params['learning_rate']
             args.batch_size = best_params['batch_size']
             args.momentum = best_params['momentum']

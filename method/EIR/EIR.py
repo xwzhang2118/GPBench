@@ -16,7 +16,7 @@ from utils.models_locally_connected import LCLModel
 from utils.common import DataDimensions
 from sklearn.metrics import  mean_squared_error, mean_absolute_error, r2_score
 from scipy.stats import pearsonr
-from EIR_he import main
+from EIR_Hyperparameters import main
 os.environ['CUDA_VISIBLE_DEVICE'] = '0'
 
 def parse_args():

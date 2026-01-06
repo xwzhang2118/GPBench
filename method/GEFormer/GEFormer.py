@@ -7,7 +7,7 @@ import random
 import numpy as np
 import pandas as pd
 import pynvml
-import GEFormer_he
+import GEFormer_Hyperparameters
 from gMLP import GEFormer
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from torch.utils.data  import DataLoader, TensorDataset
@@ -148,7 +148,7 @@ if __name__ == '__main__':
             print("starting run " + args.methods + args.species + args.phe)
             label = Y[:, j]
             label = np.nan_to_num(label, nan=np.nanmean(label))
-            best_params = GEFormer_he.main(X, label, nsnp)
+            best_params = GEFormer_Hyperparameters.main(X, label, nsnp)
             args.learning_rate = best_params['learning_rate']
             args.batch_size = best_params['batch_size']
             args.patience = best_params['patience']

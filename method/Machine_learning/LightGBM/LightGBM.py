@@ -13,7 +13,7 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import subprocess
 import threading
 import queue
-import LightGBM_he
+import LightGBM_Hyperparameters
 
 class GPUMonitor:
     def __init__(self, gpu_id=0, interval=0.5):
@@ -215,7 +215,7 @@ if __name__ == "__main__":
             label = Y[:, j]
             label = np.nan_to_num(label, nan=np.nanmean(label))
 
-            best_params = LightGBM_he.main(X, label)
+            best_params = LightGBM_Hyperparameters.main(X, label)
             args.learning_rate = best_params['learning_rate']
             args.num_leaves = best_params['num_leaves']
             args.min_data_in_leaf = best_params['min_data_in_leaf']

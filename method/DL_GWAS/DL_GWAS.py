@@ -7,7 +7,7 @@ import torch
 import numpy as np
 import pandas as pd
 import tensorflow as tf
-import DL_GWAS_he
+import DL_GWAS_Hyperparameters
 import keras
 import pynvml
 from keras import layers
@@ -169,7 +169,7 @@ if __name__ == "__main__":
             print("starting run " + args.methods + args.species + args.phe)
             label = Y[:, j]
             label = np.nan_to_num(label, nan=np.nanmean(label))
-            best_params = DL_GWAS_he.main(X, label, nsnp)
+            best_params = DL_GWAS_Hyperparameters.main(X, label, nsnp)
             args.learning_rate = best_params['learning_rate']
             args.patience = best_params['patience']
             args.batch_size = best_params['batch_size']

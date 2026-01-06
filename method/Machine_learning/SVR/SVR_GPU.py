@@ -11,7 +11,7 @@ from sklearn.model_selection import KFold
 from scipy.stats import pearsonr
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import swanlab
-import SVR_GPU_he
+import SVR_Hyperparameters
 import pynvml
 
 # 添加 cuML 导入
@@ -173,7 +173,7 @@ if __name__ == "__main__":
             label = Y[:, j]
             label = np.nan_to_num(label, nan=np.nanmean(label))
             
-            best_params = SVR_GPU_he.main(X, label)
+            best_params = SVR_Hyperparameters.main(X, label)
             args.C = best_params['C']
             args.epsilon = best_params['epsilon']
             args.kernel = best_params['kernel']

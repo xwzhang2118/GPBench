@@ -13,7 +13,7 @@ from sklearn.model_selection import KFold
 from torch.utils.data  import DataLoader, TensorDataset 
 from sklearn.preprocessing  import StandardScaler
 from sklearn.metrics  import mean_absolute_error, mean_squared_error, r2_score
-import Cropformer_he
+import Cropformer_Hyperparameters
 import pynvml
 
 def parse_args():
@@ -282,7 +282,7 @@ if __name__ == '__main__':
             print("starting run " + args.methods + args.species + args.phe)
             label = Y[:, j]
             label = np.nan_to_num(label, nan=np.nanmean(label))
-            best_params = Cropformer_he.main(X, label)
+            best_params = Cropformer_Hyperparameters.main(X, label)
             args.lr = best_params['learning_rate']
             args.num_head = best_params['heads']
             args.dropout = best_params['dropout']

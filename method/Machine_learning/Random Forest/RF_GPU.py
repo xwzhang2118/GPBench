@@ -11,7 +11,7 @@ import numpy as np
 from sklearn.model_selection import KFold
 from scipy.stats import pearsonr
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
-import RF_GPU_he
+import RF_Hyperparameters
 import cupy as cp
 
 
@@ -156,7 +156,7 @@ if __name__ == "__main__":
 
             label = Y[:, j]
             label = np.nan_to_num(label, nan=np.nanmean(label))
-            best_params = RF_GPU_he.main(X, label)
+            best_params = RF_Hyperparameters.main(X, label)
             args.n_estimators = best_params['n_estimators']
             args.max_depth = best_params['max_depth']
             start_time = time.time()

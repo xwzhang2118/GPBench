@@ -12,7 +12,7 @@ from base_G2PDeep import G2PDeep, ModelHyperparams
 from scipy.stats import pearsonr
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from torch.utils.data  import DataLoader, TensorDataset
-import G2PDeep_he
+import G2PDeep_Hyperparameters
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Argument parser")
@@ -150,7 +150,7 @@ if __name__ == "__main__":
             print("starting run " + args.methods + args.species + args.phe)
             label = Y[:, j]
             label = np.nan_to_num(label, nan=np.nanmean(label))
-            best_params = G2PDeep_he.main(X, label, nsnp)
+            best_params = G2PDeep_Hyperparameters.main(X, label, nsnp)
             args.lr = best_params['learning_rate']
             args.patience = best_params['patience']
             args.batch_size = best_params['batch_size']

@@ -14,7 +14,7 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from torch.utils.data  import DataLoader, TensorDataset, random_split
 from WheatGP_base import wheatGP_base
 from torch.optim.lr_scheduler import StepLR
-import WheatGP_he
+import WheatGP_Hyperparameters
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Argument parser")
@@ -229,7 +229,7 @@ if __name__ == "__main__":
             print("starting run " + args.methods + args.species + args.phe)
             label = Y[:, j]
             label = np.nan_to_num(label, nan=np.nanmean(label))
-            best_params = WheatGP_he.main(X, label, nsnp)
+            best_params = WheatGP_Hyperparameters.main(X, label, nsnp)
             args.learning_rate = best_params['learning_rate']
             args.weight_decay = best_params['weight_decay']
             args.patience = best_params['patience']
