@@ -46,7 +46,7 @@ def split_genotype_data(genotype1d_array, features_per_group, n_groups=5, pad_va
     return tensors
 
 def load_data(args):
-    xData = np.load(os.path.join(args.data_dir, args.species, 'genetype.npz'))["arr_0"]
+    xData = np.load(os.path.join(args.data_dir, args.species, 'genotype.npz'))["arr_0"]
     yData = np.load(os.path.join(args.data_dir, args.species, 'phenotype.npz'))["arr_0"]
     names = np.load(os.path.join(args.data_dir, args.species, 'phenotype.npz'))["arr_1"]
 

@@ -22,7 +22,7 @@ def parse_args():
 
 
 def load_data(args):
-    xData = np.load(os.path.join(args.data_dir, args.species, 'genetype.npz'))["arr_0"]
+    xData = np.load(os.path.join(args.data_dir, args.species, 'genotype.npz'))["arr_0"]
     yData = np.load(os.path.join(args.data_dir, args.species, 'phenotype.npz'))["arr_0"]
     names = np.load(os.path.join(args.data_dir, args.species, 'phenotype.npz'))["arr_1"]
 
