@@ -20,20 +20,6 @@ numpy2ri.activate()
 ro.r('library(MASS)')
 
 def gblup_r_vanraden_reml(X_train, y_train, X_test):
-    """
-    VanRaden I GBLUP with REML-estimated variance components
-    Strictly correct prediction for test set.
-
-    Args:
-        X_train: numpy array, n_train x m markers
-        y_train: numpy array, n_train x 1 phenotype
-        X_test:  numpy array, n_test x m markers
-
-    Returns:
-        y_pred: numpy array, predicted GEBV for X_test
-    """
-    import numpy as np
-    import rpy2.robjects as ro
 
     # Pass data to R
     ro.globalenv['X_train'] = X_train
@@ -153,17 +139,6 @@ def run_nested_cv(args, data, label, process):
         print(f'Fold {fold}: Corr={pcc:.4f}, MAE={mae:.4f}, MSE={mse:.4f}, R2={r2:.4f}, Time={fold_time:.2f}s, '
               f'GPU={fold_gpu_mem:.2f}MB, CPU={fold_cpu_mem:.2f}MB')
 
-        swanlab.log({
-            "fold": fold,
-            "corr": pcc,
-            "mae": mae,
-            "mse": mse,
-            "r2": r2,
-            "time_sec": fold_time,
-            "gpu_mem_MB": fold_gpu_mem,
-            "cpu_mem_MB": fold_cpu_mem,
-        })
-
         results_df = pd.DataFrame({'Y_test': y_test, 'Y_pred': y_pred})
         results_df.to_csv(os.path.join(result_dir, f"fold{fold}.csv"), index=False)
 
@@ -174,16 +149,6 @@ def run_nested_cv(args, data, label, process):
     print(f"Average R2 : {np.mean(all_r2):.4f} ± {np.std(all_r2):.4f}")
     print(f"Time: {time.time() - time_star:.2f}s")
 
-    swanlab.log({
-        "final/mae_mean": np.mean(all_mae),
-        "final/mae_std": np.std(all_mae),
-        "final/mse_mean": np.mean(all_mse),
-        "final/mse_std": np.std(all_mse),
-        "final/r2_mean": np.mean(all_r2),
-        "final/r2_std": np.std(all_r2),
-        "final/corr_mean": np.mean(all_pcc),
-        "final/corr_std": np.std(all_pcc),
-    })
 
 
 if __name__ == "__main__":
@@ -192,10 +157,9 @@ if __name__ == "__main__":
     device = torch.device("cuda:0")
     args = parse_args()
     process = psutil.Process(os.getpid())
-    all_species = ['Chicken/', 'Cotton/GSTP010/', 'Cattle/', 'Loblolly_Pine/',
-                   'Millet/GSTP011/', 'Mouse/',  'Rapeseed/GSTP013/', 
-                   'Rice/GSTP008/', 'Pig/','Maize/GSTP003/', 'Chickpea/GSTP012/', 
-                   'Soybean/GSTP014/', 'Wheat/','Yeast/']
+    all_species =['Cattle/', 'Chicken/', 'Chickpea/', 'Cotton/', 'Loblolly_Pine/',
+                   'Maize/', 'Millet/', 'Mouse/', 'Pig/', 'Rapeseed/', 
+                   'Rice/', 'Soybean/', 'Wheat/','Yeast/']
 
     for sp in all_species:
         args.species = sp
@@ -208,20 +172,9 @@ if __name__ == "__main__":
             start_time = time.time()
             torch.cuda.reset_peak_memory_stats()
 
-            swanlab.init(
-                project="Benchmark_ST_Method_L40",
-                entity="xwzhang",
-                name=args.methods + args.species + args.phe,
-                config={
-                    "cv_splits": 10,
-                }
-            )
 
             run_nested_cv(args, data=X, label=label, process=process)
-            
+        
             elapsed_time = time.time() - start_time
             print(f"运行时间: {elapsed_time:.2f} 秒")
-            swanlab.log({"final/all_time": elapsed_time})
-            
-            swanlab.finish()
             print("successfully")
