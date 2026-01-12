@@ -187,16 +187,7 @@ When you provide a dataset path, the tool performs the following analysis steps:
 
 #### Use Cases
 
-1. **Complete dataset analysis**: Analyze your dataset and get method recommendations based on similar historical datasets:
-
-```bash
-python main.py \
-  -d ../data/Rapeseed \
-  -q "分析这个数据集并推荐最合适的算法" \
-  -o result.json
-```
-
-2. **General method query**: Query methods based on specific criteria without providing a dataset:
+1. **General method query**: Query methods based on specific criteria without providing a dataset:
 
 ```bash
 python main.py \
@@ -204,12 +195,12 @@ python main.py \
   -o result.json
 ```
 
-3. **Evaluation mode with masking**: When evaluating on a known dataset, mask it to avoid bias in the analysis:
+2. **Evaluation mode with masking**: When evaluating on a known dataset, mask it to avoid bias in the analysis:
 
 ```bash
 python main.py \
   -d ../data/Rapeseed \
-  -q "分析这个数据集并推荐算法" \
+  -q "Analyze this dataset and recommend appropriate algorithms." \
   -m Rapeseed/FloweringTime \
   -o result.json
 ```
