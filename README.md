@@ -7,6 +7,7 @@ GPBench is a benchmarking toolkit for genomic prediction. This repository reimpl
 - Supports GPU-accelerated deep learning methods (using PyTorch)
 - Unified data loading and 10-fold cross-validation pipeline
 - Outputs standardized evaluation metrics (PCC, MAE, MSE, R2) and per-fold predictions
+- **LLM-powered analysis tool** (`gp_agent_tool`): Analyzes dataset characteristics, finds similar datasets, and recommends suitable genomic prediction methods based on historical experimental experience
 
 ## Important Structure
 - `data/`: Example/real dataset directory, each species/dataset is a subfolder (e.g., `data/Cotton/`), containing:
@@ -14,6 +15,7 @@ GPBench is a benchmarking toolkit for genomic prediction. This repository reimpl
 	- `phenotype.npz`: phenotype data (contains phenotype matrix and phenotype names)
 - `method/`: subdirectories with implementations for each method (each method usually contains a main runner script plus hyperparameter/utility scripts)
 - `result/`: default output directory for experimental results
+- `gp_agent_tool/`: LLM-powered dataset analysis and method recommendation tool (see [Dataset Analysis Tool](#dataset-analysis-tool-gp_agent_tool) section)
 - `environment.yml`: dependency file for creating a conda environment (recommended)
 
 ## Environment Setup (recommended: conda)
@@ -79,8 +81,141 @@ You can inspect the argparse help for the specific script in the method director
 python method/DeepCCR/DeepCCR.py -h
 ```
 
+## Dataset Analysis Tool (gp_agent_tool)
+
+The `gp_agent_tool` is an LLM-powered analysis tool that performs comprehensive dataset analysis and automatically recommends suitable genomic prediction methods. It analyzes your dataset characteristics, computes statistical features, finds similar datasets from historical experiments, and provides evidence-based method recommendations.
+
+### Features
+- **Dataset statistical analysis**: Automatically computes and analyzes dataset statistics including sample size, marker count, phenotype distribution, missing rates, and statistical properties
+- **Similar dataset discovery**: Finds datasets with similar statistical distributions to your query dataset from historical experimental databases
+- **Method recommendation**: Recommends genomic prediction methods that have shown best performance on similar datasets based on historical experience
+- **Bilingual support**: Supports both Chinese and English queries and analysis
+- **Experience-based insights**: Leverages comprehensive historical experimental results to provide evidence-based analysis and recommendations
+
+### Prerequisites
+
+1. **LLM Configuration**: Create a configuration file at `gp_agent_tool/config/config.json` with your LLM API settings:
+
+```json
+{
+  "llm": {
+    "model": "gpt-4o-mini",
+    "api_key": "YOUR_API_KEY",
+    "base_url": "https://api.openai.com/v1"
+  },
+  "codegen_llm": {
+    "model": "gpt-4o-mini",
+    "api_key": "YOUR_API_KEY",
+    "base_url": "https://api.openai.com/v1"
+  },
+  "multimodal_llm": {
+    "model": "qwen-vl-max",
+    "api_key": "YOUR_DASHSCOPE_API_KEY"
+  }
+}
+```
+
+2. **Additional Dependencies**: Install required packages for the tool:
+
+```bash
+pip install langchain langgraph openai
+```
+
+### Usage
+
+#### Basic Usage
+
+Run the tool from the project root directory:
+
+```bash
+cd gp_agent_tool
+python main.py \
+  -q "Based on existing models, summarize the patterns in the mkg trait of cattle." \
+  -o result.json
+```
+
+Or in English:
+
+```bash
+python main.py \
+  -d ../data/Rapeseed \
+  -q "Recommend the best methods for this dataset" \
+  -o result.json
+```
+
+#### Command-line Arguments
+
+- **`-d / --dataset`** (optional): Path to the dataset directory containing `genetype.npz` and `phenotype.npz`. The tool will analyze this dataset to compute statistical features. If not provided, analysis and recommendations are based on the complete experience table only.
+- **`-q / --user-query`** (required): Your analysis requirement or question description (supports both Chinese and English). Examples: "分析这个数据集的特征" / "Analyze this dataset and recommend methods" / "What methods work best for binary phenotypes?"
+- **`-m / --mask`** (optional): Specify a `species/phenotype` (e.g., `Rapeseed/FloweringTime`) to mask in the reference experience database, preventing "answer leakage" when evaluating on known datasets.
+- **`-o / --output`** (optional): Path to save the analysis result as a JSON file. If not provided, results are printed to the terminal.
+
+#### Dataset Analysis Features
+
+When a dataset path is provided, the tool automatically computes the following statistical features:
+
+- **Sample information**: Total samples, valid samples, missing rate
+- **Marker information**: Number of markers, genotype statistics (mean, std, missing rate, MAF)
+- **Phenotype statistics**: Mean, std, min, max, median, skewness, kurtosis
+- **Data type information**: Genotype and phenotype data types, binary phenotype detection
+
+#### Example Output
+
+The tool returns a JSON object with two main sections:
+
+```json
+{
+  "similar_datasets": {
+    "items": ["Chickpea/Days_to_0.5_flowering", "Cotton/FibLen_17_18"],
+    "reason": "These datasets have similar statistical distributions..."
+  },
+  "methods": {
+    "items": ["GBLUP", "XGBoost", "LightGBM"],
+    "reason": "Based on historical experience, these methods showed best performance on similar datasets..."
+  }
+}
+```
+
+#### Analysis Workflow
+
+When you provide a dataset path, the tool performs the following analysis steps:
+
+1. **Dataset feature extraction**: Computes statistical features from your dataset (phenotype mean, std, skewness, kurtosis, sample size, marker count, etc.)
+2. **Similar dataset matching**: Compares your dataset features with historical datasets to find the most similar ones
+3. **Experience table filtering**: Filters the historical experience table to include only results from similar datasets
+4. **Method analysis and recommendation**: Analyzes which methods performed best on similar datasets and recommends them with detailed reasoning
+
+#### Use Cases
+
+1. **Complete dataset analysis**: Analyze your dataset and get method recommendations based on similar historical datasets:
+
+```bash
+python main.py \
+  -d ../data/Rapeseed \
+  -q "分析这个数据集并推荐最合适的算法" \
+  -o result.json
+```
+
+2. **General method query**: Query methods based on specific criteria without providing a dataset:
+
+```bash
+python main.py \
+  -q "What methods work best for small sample sizes?" \
+  -o result.json
+```
+
+3. **Evaluation mode with masking**: When evaluating on a known dataset, mask it to avoid bias in the analysis:
+
+```bash
+python main.py \
+  -d ../data/Rapeseed \
+  -q "分析这个数据集并推荐算法" \
+  -m Rapeseed/FloweringTime \
+  -o result.json
+```
+
 ## Output Description
-- Each run creates a directory under `result/` named by method/species/phenotype, e.g., `result/DeepCCR/Cotton/<PHENO>/`.
+- Each method run creates a directory under `result/` named by method/species/phenotype, e.g., `result/DeepCCR/Cotton/<PHENO>/`.
 - Per-fold prediction results are typically saved as `fold{n}.csv`, containing `Y_test` and `Y_pred` columns.
 - The script prints or saves average evaluation metrics at the end: PCC (Pearson correlation coefficient), MAE, MSE, R2, along with runtime and memory/GPU usage.
 
