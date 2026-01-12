@@ -1,0 +1,20 @@
+{
+  "similar_datasets": {
+    "items": [
+      "Wheat/Adj.Grain.Yield",
+      "Maize/PH",
+      "Rapeseed/FloweringTime",
+      "Pig/age",
+      "Millet/MSH"
+    ],
+    "reason": "The recommended datasets were selected based on their similarity in key statistical properties such as phenotypic mean, standard deviation, skewness, kurtosis, and sample size to the target Rapeseed dataset. The similarity was determined using a distance metric, with Wheat/Adj.Grain.Yield showing the closest match."
+  },
+  "methods": {
+    "items": [
+      "XGBoost",
+      "rrBLUP",
+      "BayesA"
+    ],
+    "reason": "The recommendation is based on correlation performance metrics, with XGBoost achieving the highest average correlation (0.6067) followed by rrBLUP and BayesA (both at 0.5945). These three algorithms were selected as they demonstrate the strongest predictive relationship capture in the dataset according to the correlation metric."
+  }
+}

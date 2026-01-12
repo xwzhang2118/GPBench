@@ -1,0 +1,22 @@
+{
+  "llm": {
+    "model": "gpt-4o-mini",
+    "api_key": "YOUR_OPENAI_API_KEY",
+    "base_url": "https://api.openai.com/v1",
+    "timeout_seconds": 60,
+    "max_retries": 3
+  },
+  "codegen_llm": {
+    "model": "gpt-4o-mini",
+    "api_key": "YOUR_OPENAI_API_KEY",
+    "base_url": "https://api.openai.com/v1",
+    "timeout_seconds": 60,
+    "max_retries": 3
+  },
+  "multimodal_llm": {
+    "model": "qwen-vl-max",
+    "api_key": "YOUR_DASHSCOPE_API_KEY"
+  }
+}
+
+

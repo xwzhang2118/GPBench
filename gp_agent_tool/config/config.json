@@ -1,0 +1,36 @@
+{
+  "llm": {
+    "provider": "openai",
+    "model": "qwen-plus",
+    "api_key": "sk-d067746b05c248c3a68edac61b056e2f",
+    "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+    "timeout_seconds": 180,
+    "connect_timeout_seconds": 10,
+    "write_timeout_seconds": 30,
+    "max_retries": 3,
+    "retry_backoff_seconds": 1.5
+  },
+  "multimodal_llm": {
+    "api_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+    "model": "qwen3-vl-flash",
+    "api_key": "sk-d067746b05c248c3a68edac61b056e2f",
+    "timeout_seconds": 180,
+    "connect_timeout_seconds": 30,
+    "write_timeout_seconds": 30,
+    "max_retries": 3,
+    "retry_backoff_seconds": 1.5
+  },
+  "codegen_llm": {
+    "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+    "model": "qwen3-coder-flash",
+    "api_key": "sk-d067746b05c248c3a68edac61b056e2f",
+    "timeout_seconds": 180,
+    "connect_timeout_seconds": 10,
+    "write_timeout_seconds": 30,
+    "max_retries": 3,
+    "retry_backoff_seconds": 1.5,
+    "provider": "openai"
+  }
+}
+
+
