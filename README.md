@@ -11,7 +11,7 @@ GPBench is a benchmarking toolkit for genomic prediction. This repository reimpl
 
 ## Important Structure
 - `data/`: Example/real dataset directory, each species/dataset is a subfolder (e.g., `data/Cotton/`), containing:
-	- `genetype.npz`: genotype matrix (typically saved as a NumPy array)
+	- `genotype.npz`: genotype matrix (typically saved as a NumPy array)
 	- `phenotype.npz`: phenotype data (contains phenotype matrix and phenotype names)
 - `method/`: subdirectories with implementations for each method (each method usually contains a main runner script plus hyperparameter/utility scripts)
 - `result/`: default output directory for experimental results
