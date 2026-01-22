@@ -14,12 +14,12 @@ class ModelHyperparams:
                  central_tower_kernel_size_list: Optional[List[int]] = None,
                  dnn_size_list: Optional[List[int]] = None,
                  activation: str = "linear",
-                 dropout_rate: float = 0.75):
-        self.left_tower_filters_list = left_tower_filters_list or [10, 10]
-        self.left_tower_kernel_size_list = left_tower_kernel_size_list or [3, 15]
-        self.right_tower_filters_list = right_tower_filters_list or [10]
+                 dropout_rate: float = 0.75):   # ⬅ 改小
+        self.left_tower_filters_list = left_tower_filters_list or [4, 4]
+        self.left_tower_kernel_size_list = left_tower_kernel_size_list or [3, 5]
+        self.right_tower_filters_list = right_tower_filters_list or [4]
         self.right_tower_kernel_size_list = right_tower_kernel_size_list or [3]
-        self.central_tower_filters_list = central_tower_filters_list or [10]
+        self.central_tower_filters_list = central_tower_filters_list or [4]
         self.central_tower_kernel_size_list = central_tower_kernel_size_list or [3]
         self.dnn_size_list = dnn_size_list or [1]
         self.activation = activation
@@ -119,33 +119,57 @@ class G2PDeep(nn.Module):
         optimizer = torch.optim.Adam(self.parameters(), lr=learning_rate, weight_decay=1e-4)
         criterion = nn.MSELoss()
         self.to(device)
+        
+        # 启用混合精度训练
+        use_amp = device.type == 'cuda'
+        scaler = torch.amp.GradScaler('cuda') if use_amp else None
 
         best_loss = float('inf')
         best_state = None
         trigger_times = 0
 
         for epoch in range(num_epochs):
+            # 训练
             self.train()
             train_loss = 0.0
             for inputs, labels in train_loader:
-                inputs = inputs.to(device)
-                labels = labels.to(device).unsqueeze(1)
+                inputs = inputs.to(device, non_blocking=True)
+                labels = labels.to(device, non_blocking=True).unsqueeze(1)
+                
                 optimizer.zero_grad()
-                outputs = self(inputs)
-                loss = criterion(outputs, labels)
-                loss.backward()
-                optimizer.step()
+                
+                if use_amp:
+                    with torch.amp.autocast('cuda'):
+                        outputs = self(inputs)
+                        loss = criterion(outputs, labels)
+                    scaler.scale(loss).backward()
+                    scaler.step(optimizer)
+                    scaler.update()
+                else:
+                    outputs = self(inputs)
+                    loss = criterion(outputs, labels)
+                    loss.backward()
+                    optimizer.step()
+                
                 train_loss += loss.item() * inputs.size(0)
             train_loss /= len(train_loader.dataset)
 
+            # 验证
             self.eval()
             valid_loss = 0.0
             with torch.no_grad():
                 for inputs, labels in valid_loader:
-                    inputs = inputs.to(device)
-                    labels = labels.to(device).unsqueeze(1)
-                    outputs = self(inputs)
-                    loss = criterion(outputs, labels)
+                    inputs = inputs.to(device, non_blocking=True)
+                    labels = labels.to(device, non_blocking=True).unsqueeze(1)
+                    
+                    if use_amp:
+                        with torch.amp.autocast('cuda'):
+                            outputs = self(inputs)
+                            loss = criterion(outputs, labels)
+                    else:
+                        outputs = self(inputs)
+                        loss = criterion(outputs, labels)
+                    
                     valid_loss += loss.item() * inputs.size(0)
             valid_loss /= len(valid_loader.dataset)
 
@@ -169,12 +193,17 @@ class G2PDeep(nn.Module):
     def predict(self, test_loader, device):
         self.eval()
         self.to(device)
-        y_pred = []
+        y_pred_list = []
+        use_amp = device.type == 'cuda'
         with torch.no_grad():
             for inputs, _ in test_loader:
-                inputs = inputs.to(device)
-                outputs = self(inputs)
-                y_pred.append(outputs.cpu().numpy())
-        y_pred = np.concatenate(y_pred, axis=0)
+                inputs = inputs.to(device, non_blocking=True)
+                if use_amp:
+                    with torch.amp.autocast('cuda'):
+                        outputs = self(inputs)
+                else:
+                    outputs = self(inputs)
+                y_pred_list.append(outputs.cpu())
+        y_pred = torch.cat(y_pred_list, dim=0).numpy()  # 一次性转换
         y_pred = np.squeeze(y_pred)
         return y_pred
