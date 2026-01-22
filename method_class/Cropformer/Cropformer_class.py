@@ -1,0 +1,306 @@
+import argparse
+import random
+import torch
+import swanlab
+import numpy as np
+import pandas as pd
+import torch.nn as nn
+import time, psutil, os
+import torch.optim as optim
+from torch.optim import Adam
+from lightning.pytorch import LightningModule
+from sklearn.model_selection import KFold
+from sklearn.preprocessing import LabelEncoder
+from torch.utils.data import DataLoader, TensorDataset
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score, precision_recall_fscore_support
+import cropformer_he_class
+import pynvml
+
+# =========================
+# Argument parser
+# =========================
+def parse_args():
+    parser = argparse.ArgumentParser(description="Argument parser")
+    parser.add_argument('--methods', type=str, default='Cropformer/', help='Method name')
+    parser.add_argument('--species', type=str, default='', help='Dataset name')
+    parser.add_argument('--phe', type=str, default='', help='Phenotype name')
+    parser.add_argument('--data_dir', type=str, default='data/', help='Data directory')
+    parser.add_argument('--result_dir', type=str, default='result/', help='Result directory')
+    
+    parser.add_argument('--lr', type=float, default=0.01, help='Learning rate')
+    parser.add_argument('--num_head', type=int, default=1, help='Number of attention heads')
+    parser.add_argument('--dropout', type=float, default=0.5, help='Dropout probability')
+    parser.add_argument('--batch_size', type=int, default=32, help='Batch size')
+    parser.add_argument('--hidden_dim', type=int, default=64, help='Hidden dimension')
+    parser.add_argument('--kernel_size', type=int, default=3, help='Kernel size')
+    parser.add_argument('--patience', type=int, default=5, help='Early stopping patience')
+    args = parser.parse_args()
+    return args
+
+def load_data(args):
+    xData = np.load(os.path.join(args.data_dir, args.species, 'genetype.npz'))["arr_0"]
+    yData = np.load(os.path.join(args.data_dir, args.species, 'phenotype.npz'))["arr_0"]
+    names = np.load(os.path.join(args.data_dir, args.species, 'phenotype.npz'))["arr_1"]
+    print(f"Number of samples: {xData.shape[0]}, Number of SNPs: {xData.shape[1]}")
+    return xData, yData, xData.shape[0], xData.shape[1], names
+
+class LayerNorm(nn.Module):
+    def __init__(self, hidden_size, eps=1e-12):
+        super(LayerNorm, self).__init__()
+        self.weight = nn.Parameter(torch.ones(hidden_size))
+        self.bias = nn.Parameter(torch.zeros(hidden_size))
+        self.variance_epsilon = eps
+
+    def forward(self, x):
+        u = x.mean(-1, keepdim=True)
+        s = (x - u).pow(2).mean(-1, keepdim=True)
+        x = (x - u) / torch.sqrt(s + self.variance_epsilon)
+        return self.weight * x + self.bias
+
+class SelfAttention(LightningModule):
+    def __init__(self, num_attention_heads, input_size, hidden_size, output_dim=2, kernel_size=3,
+                 hidden_dropout_prob=0.5, attention_probs_dropout_prob=0.5, learning_rate=0.001):
+        super(SelfAttention, self).__init__()
+        self.num_attention_heads = num_attention_heads
+        self.attention_head_size = int(hidden_size / num_attention_heads)
+        self.all_head_size = hidden_size
+
+        self.query = nn.Linear(input_size, self.all_head_size)
+        self.key = nn.Linear(input_size, self.all_head_size)
+        self.value = nn.Linear(input_size, self.all_head_size)
+
+        self.attn_dropout = nn.Dropout(attention_probs_dropout_prob)
+        self.out_dropout = nn.Dropout(hidden_dropout_prob)
+        self.dense = nn.Linear(hidden_size, input_size)
+        self.LayerNorm = nn.LayerNorm(input_size, eps=1e-12)
+        self.relu = nn.ReLU()
+        self.out = nn.Linear(input_size, output_dim)
+        self.cnn = nn.Conv1d(1, 1, kernel_size, stride=1, padding=1)
+
+        self.learning_rate = learning_rate
+        self.loss_fn = nn.CrossEntropyLoss()
+
+    def forward(self, input_tensor):
+        input_tensor = input_tensor.to(self.device)
+        self.cnn = self.cnn.to(self.device)
+
+        cnn_hidden = self.cnn(input_tensor.view(input_tensor.size(0), 1, -1))
+        input_tensor = cnn_hidden
+        mixed_query_layer = self.query(input_tensor)
+        mixed_key_layer = self.key(input_tensor)
+        mixed_value_layer = self.value(input_tensor)
+
+        attention_scores = torch.matmul(mixed_query_layer, mixed_key_layer.transpose(-1, -2))
+        attention_scores = attention_scores / np.sqrt(self.attention_head_size)
+        attention_probs = torch.nn.Softmax(dim=-1)(attention_scores)
+        attention_probs = self.attn_dropout(attention_probs)
+
+        context_layer = torch.matmul(attention_probs, mixed_value_layer)
+        hidden_states = self.dense(context_layer)
+        hidden_states = self.out_dropout(hidden_states)
+        hidden_states = self.LayerNorm(hidden_states + input_tensor)
+        output = self.out(self.relu(hidden_states.view(hidden_states.size(0), -1)))
+        return output
+
+    def training_step(self, batch, batch_idx):
+        x, y = batch
+        y = y.long()
+        y_pred = self(x)
+        loss = self.loss_fn(y_pred, y)
+        return loss
+
+    def validation_step(self, batch, batch_idx):
+        x, y = batch
+        y = y.long()
+        y_pred = self(x)
+        val_loss = self.loss_fn(y_pred, y)
+        return val_loss
+
+    def configure_optimizers(self):
+        return Adam(self.parameters(), lr=self.learning_rate)
+
+class EarlyStopping:
+    def __init__(self, patience=10, delta=0):
+        self.patience = patience
+        self.delta = delta
+        self.best_score = None
+        self.counter = 0
+        self.early_stop = False
+
+    def __call__(self, score):
+        if self.best_score is None:
+            self.best_score = score
+        elif score < self.best_score + self.delta:
+            self.counter += 1
+            if self.counter >= self.patience:
+                self.early_stop = True
+        else:
+            self.best_score = score
+            self.counter = 0
+
+def get_gpu_mem_by_pid(pid):
+    procs = pynvml.nvmlDeviceGetComputeRunningProcesses(handle)
+    for p in procs:
+        if p.pid == pid:
+            return p.usedGpuMemory / 1024**2
+    return 0.0
+
+def run_nested_cv_with_early_stopping(args, data, label, outer_cv, learning_rate, batch_size, hidden_dim,
+                                      output_dim, kernel_size, patience, DEVICE):
+    result_dir = os.path.join(args.result_dir, args.methods + args.species + args.phe)
+    os.makedirs(result_dir, exist_ok=True)
+    
+    all_acc, all_prec, all_rec, all_f1 = [], [], [], []
+    time_star = time.time()
+    process = psutil.Process(os.getpid())
+
+    for fold, (train_idx, test_idx) in enumerate(outer_cv.split(data)):
+        fold_start_time = time.time()
+        if torch.cuda.is_available():
+            torch.cuda.reset_peak_memory_stats()
+
+        x_train, x_test = data[train_idx], data[test_idx]
+        y_train, y_test = label[train_idx], label[test_idx]
+
+        num_attention_heads = args.num_head
+        attention_probs_dropout_prob = args.dropout
+        hidden_dropout_prob = 0.5
+
+        model = SelfAttention(num_attention_heads, x_train.shape[1], hidden_dim, output_dim,
+                              hidden_dropout_prob=hidden_dropout_prob, kernel_size=kernel_size,
+                              attention_probs_dropout_prob=attention_probs_dropout_prob).to(DEVICE)
+
+        optimizer = Adam(model.parameters(), lr=learning_rate)
+
+        scaler = StandardScaler()
+        x_train = scaler.fit_transform(x_train)
+        x_test = scaler.transform(x_test)
+
+        x_train_tensor = torch.from_numpy(x_train).float().to(DEVICE)
+        y_train_tensor = torch.from_numpy(y_train).long().to(DEVICE)
+        x_test_tensor = torch.from_numpy(x_test).float().to(DEVICE)
+        y_test_tensor = torch.from_numpy(y_test).long().to(DEVICE)
+
+        train_data = TensorDataset(x_train_tensor, y_train_tensor)
+        test_data = TensorDataset(x_test_tensor, y_test_tensor)
+
+        train_loader = DataLoader(train_data, batch_size, shuffle=True)
+        test_loader = DataLoader(test_data, batch_size, shuffle=False)
+
+        early_stopping = EarlyStopping(patience=patience)
+        best_f1 = -float('inf')
+
+        for epoch in range(100):
+            model.train()
+            for x_batch, y_batch in train_loader:
+                optimizer.zero_grad()
+                y_pred = model(x_batch)
+                loss = model.loss_fn(y_pred, y_batch)
+                loss.backward()
+                optimizer.step()
+
+            model.eval()
+            y_test_preds, y_test_trues = [], []
+            with torch.no_grad():
+                for x_batch, y_batch in test_loader:
+                    y_test_pred = model(x_batch)
+                    preds = torch.argmax(y_test_pred, dim=1)
+                    y_test_preds.extend(preds.cpu().numpy())
+                    y_test_trues.extend(y_batch.cpu().numpy())
+
+            acc = accuracy_score(y_test_trues, y_test_preds)
+            prec, rec, f1, _ = precision_recall_fscore_support(
+                y_test_trues, y_test_preds, average="macro", zero_division=0
+            )
+
+            if f1 > best_f1:
+                best_acc, best_prec, best_rec, best_f1 = acc, prec, rec, f1
+
+            early_stopping(f1)
+            if early_stopping.early_stop:
+                print(f"Early stopping at epoch {epoch + 1}")
+                break
+
+        all_acc.append(best_acc)
+        all_prec.append(best_prec)
+        all_rec.append(best_rec)
+        all_f1.append(best_f1)
+
+        fold_time = time.time() - fold_start_time
+        fold_gpu_mem = get_gpu_mem_by_pid(os.getpid())
+        fold_cpu_mem = process.memory_info().rss / 1024**2
+
+        print(f'Fold {fold + 1}: ACC={best_acc:.4f}, PREC={best_prec:.4f}, REC={best_rec:.4f}, F1={best_f1:.4f}, '
+              f'Time={fold_time:.2f}s, GPU={fold_gpu_mem:.2f}MB, CPU={fold_cpu_mem:.2f}MB')
+
+        results_df = pd.DataFrame({'Y_test': y_test_trues, 'Y_pred': y_test_preds})
+        results_df.to_csv(os.path.join(result_dir, f"fold{fold}.csv"), index=False)
+
+    print("==== Final Results ====")
+    print(f"ACC : {np.mean(all_acc):.4f} ± {np.std(all_acc):.4f}")
+    print(f"PREC: {np.mean(all_prec):.4f} ± {np.std(all_prec):.4f}")
+    print(f"REC : {np.mean(all_rec):.4f} ± {np.std(all_rec):.4f}")
+    print(f"F1  : {np.mean(all_f1):.4f} ± {np.std(all_f1):.4f}")
+    print(f"Time: {time.time() - time_star:.2f}s")
+
+
+# =========================
+# Set seed
+# =========================
+def set_seed(seed=42):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+
+# =========================
+# Main
+# =========================
+if __name__ == '__main__':
+    set_seed(42)
+    pynvml.nvmlInit()
+    handle = pynvml.nvmlDeviceGetHandleByIndex(0)
+    device = torch.device("cuda:0")
+    args = parse_args()
+    all_species = ['Horse/', 'Human/Amd/','Human/BC/'] 
+
+    for i in range(len(all_species)):
+        args.species = all_species[i]
+        X, Y, nsamples, nsnp, names = load_data(args)
+        print("Starting run " + args.methods + args.species)
+        label = Y[:, 0]
+        le = LabelEncoder()
+        label = le.fit_transform(label)
+
+        best_params = cropformer_he_class.main(X, label)
+        args.lr = best_params['learning_rate']
+        args.num_head = best_params['heads']
+        args.dropout = best_params['dropout']
+        args.batch_size = best_params['batch_size']
+
+        outer_cv = KFold(n_splits=10, shuffle=True, random_state=42)
+
+        start_time = time.time()
+        torch.cuda.reset_peak_memory_stats()
+        process = psutil.Process(os.getpid())
+
+        run_nested_cv_with_early_stopping(
+            args,
+            data=X,
+            label=label,
+            outer_cv=outer_cv,
+            learning_rate=args.lr,
+            batch_size=args.batch_size,
+            hidden_dim=args.hidden_dim,
+            output_dim=len(np.unique(label)),
+            kernel_size=3,
+            patience=args.patience,
+            DEVICE='cuda:0' if torch.cuda.is_available() else 'cpu'
+        )
+
+        elapsed_time = time.time() - start_time
+        print(f"Total runtime: {elapsed_time:.2f} seconds")
+        print("Successfully finished!")
