@@ -11,7 +11,7 @@ from scipy.stats import pearsonr
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from torch.utils.data import DataLoader, TensorDataset
 from base_MVP import MVP
-import MVP_he
+import MVP_Hyperparameters
 import pynvml
 
 
