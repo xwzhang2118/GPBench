@@ -221,7 +221,7 @@ dependencies:
   - openssl=3.6.0=h26f9b46_0
   - orc=2.0.1=h17fec99_1
   - packaging=25.0=pyh29332c3_1
-  - pandas=2.3.3=py39h505adc9_0
+  - pandas>=2.0,<2.2.3
   - pango=1.54.0=h4c5309f_1
   - partd=1.4.2=pyhd8ed1ab_0
   - pcre2=10.42=hcad00b1_0
@@ -452,7 +452,7 @@ dependencies:
       - sqlalchemy==2.0.44
       - statsmodels==0.14.5
       - stevedore==5.5.0
-      - swanlab==0.7.5
+      - swanlab==0.7.6
       - sympy==1.14.0
       - tenacity==9.1.2
       - tensorboard==2.20.0
@@ -483,3 +483,4 @@ dependencies:
       - xlsxwriter==3.2.9
       - xxhash==3.6.0
       - yarl==1.22.0
+prefix: /home/common/xwzhang/miniconda3/envs/Benchmark
