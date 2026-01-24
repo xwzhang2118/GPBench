@@ -13,7 +13,7 @@ GPBench is a benchmarking toolkit for genomic prediction. This repository reimpl
 - `data/`: Example/real dataset directory, each species/dataset is a subfolder (e.g., `data/Cotton/`), containing:
 	- `genotype.npz`: genotype matrix (typically saved as a NumPy array)
 	- `phenotype.npz`: phenotype data (contains phenotype matrix and phenotype names)
-- `method/`: subdirectories with implementations for each method (each method usually contains a main runner script plus hyperparameter/utility scripts)
+- `method_reg/`: subdirectories with implementations for each method (each method usually contains a main runner script plus hyperparameter/utility scripts)
 - `result/`: default output directory for experimental results
 - `gp_agent_tool/`: LLM-powered dataset analysis and method recommendation tool (see [Dataset Analysis Tool](#dataset-analysis-tool-gp_agent_tool) section)
 - `environment.yml`: dependency file for creating a conda environment (recommended)
@@ -39,8 +39,8 @@ pip install -U numpy pandas scikit-learn torch torchvision optuna psutil xgboost
 (Warning: the above is a simplified installation; some packages may need additional configuration on GPU systems or certain platforms.)
 
 ## Data Format and Preparation
-- Each species folder should contain `genetype.npz` and `phenotype.npz`.
-- `genetype.npz` usually stores a 2D array (number of samples × number of SNPs).
+- Each species folder should contain `genotype.npz` and `phenotype.npz`.
+- `genotype.npz` usually stores a 2D array (number of samples × number of SNPs).
 - `phenotype.npz` typically includes two arrays: the phenotype matrix (number of samples × number of phenotypes) and a list of phenotype names.
 
 Quickly view phenotype names for a dataset (e.g., `Cotton`):
@@ -54,17 +54,17 @@ PY
 ```
 
 ## Quick Start (example with a method)
-Most methods have a main script under `method/<Method>/`. Scripts usually accept parameters like `--methods`, `--species`, `--phe`, `--data_dir`, `--result_dir`, etc. Example:
+Most methods have a main script under `method_reg/<Method>/`. Scripts usually accept parameters like `--methods`, `--species`, `--phe`, `--data_dir`, `--result_dir`, etc. Example:
 
 ```bash
 # 1) Activate the environment
 conda activate Benchmark
 
 # 2) Run a single phenotype with DeepCCR (note: include trailing slash after --species)
-python method/DeepCCR/DeepCCR.py \
+python method_reg/DeepCCR/DeepCCR.py \
 	--methods DeepCCR/ \
 	--species Cotton/ \
-	--phe <PHENOTYPE_NAME> \
+	--phe FibLen_17_18 \
 	--data_dir data/ \
 	--result_dir result/
 ```
@@ -78,7 +78,7 @@ Common optional arguments (may vary across scripts):
 You can inspect the argparse help for the specific script in the method directory:
 
 ```bash
-python method/DeepCCR/DeepCCR.py -h
+python method_reg/DeepCCR/DeepCCR.py -h
 ```
 
 ## Dataset Analysis Tool (gp_agent_tool)
@@ -145,7 +145,7 @@ python main.py \
 
 #### Command-line Arguments
 
-- **`-d / --dataset`** (optional): Path to the dataset directory containing `genetype.npz` and `phenotype.npz`. The tool will analyze this dataset to compute statistical features. If not provided, analysis and recommendations are based on the complete experience table only.
+- **`-d / --dataset`** (optional): Path to the dataset directory containing `genotype.npz` and `phenotype.npz`. The tool will analyze this dataset to compute statistical features. If not provided, analysis and recommendations are based on the complete experience table only.
 - **`-q / --user-query`** (required): Your analysis requirement or question description (supports both Chinese and English). Examples: "分析这个数据集的特征" / "Analyze this dataset and recommend methods" / "What methods work best for binary phenotypes?"
 - **`-m / --mask`** (optional): Specify a `species/phenotype` (e.g., `Rapeseed/FloweringTime`) to mask in the reference experience database, preventing "answer leakage" when evaluating on known datasets.
 - **`-o / --output`** (optional): Path to save the analysis result as a JSON file. If not provided, results are printed to the terminal.
