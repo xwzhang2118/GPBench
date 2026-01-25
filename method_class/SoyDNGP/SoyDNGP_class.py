@@ -20,8 +20,8 @@ def parse_args():
     parser.add_argument('--methods', type=str, default='SoyDNGP/', help='Random seed')
     parser.add_argument('--species', type=str, default='Chicken/', help='Species name')
     parser.add_argument('--phe', type=str, default='', help='Dataset name')
-    parser.add_argument('--data_dir', type=str, default='/home/common/xwzhang/Project/Benchmark/data/')
-    parser.add_argument('--result_dir', type=str, default='/home/common/xwzhang/Project/Benchmark/result/')
+    parser.add_argument('--data_dir', type=str, default='data/')
+    parser.add_argument('--result_dir', type=str, default='result/')
     
     parser.add_argument('--epochs', type=int, default=1000, help='Number of training rounds')
     parser.add_argument('--batch_size', type=int, default=32, help='Batch size')
@@ -155,7 +155,7 @@ if __name__ == "__main__":
     handle = pynvml.nvmlDeviceGetHandleByIndex(0)
     
     args = parse_args()
-    all_species = ['Horse/',"Human/Amd/",'Human/BC/']
+    all_species = ["Human/Sim/"]
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     args.device = device
     for i in range(len(all_species)):

@@ -113,7 +113,7 @@ if __name__ == "__main__":
     torch.cuda.empty_cache()
     args = parse_args()
 
-    all_species = ['Human/Amd/', 'Human/BC/',"Horse/"]
+    all_species = ["Human/Sim/"]
 
     for i in range(len(all_species)):
         args.species = all_species[i]

@@ -244,7 +244,7 @@ if __name__ == '__main__':
     gpu_handle = pynvml.nvmlDeviceGetHandleByIndex(0)
     
     args = parse_args()
-    all_species =  ['Horse/','Human/Amd/', 'Human/BC/']
+    all_species =  ["Human/Sim/"]
     for i in range(len(all_species)):
         args.species = all_species[i]
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")

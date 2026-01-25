@@ -106,7 +106,7 @@ def run_nested_cv(args, data, label):
 if __name__ == "__main__":
     set_seed(42)
     args = parse_args()
-    all_species = ['Horse/', 'Human/BC/', 'Human/Amd/']
+    all_species = ["Human/Sim/"]
     for i in range(len(all_species)):
         args.species = all_species[i]
     

@@ -134,7 +134,7 @@ if __name__ == "__main__":
 
     args = parse_args()
 
-    all_species = ['Human/Amd/', 'Human/BC/',"Horse/"]
+    all_species = ["Human/Sim/"]
     for species in all_species:
         args.species = species
         X, Y = load_data(args)

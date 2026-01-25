@@ -249,6 +249,9 @@ dependencies:
   - pytz=2025.2=pyhd8ed1ab_0
   - pyzmq=27.0.2=py39haa5fa38_0
   - r-base=4.3.2=hb8ee39d_2
+  - r-rrblup
+  - r-bglr
+  - r-mass
   - raft-dask=24.08.01=cuda11_py39_240807_g185da16b_0
   - rapids-dask-dependency=24.08.00=py_0
   - rdma-core=60.0=hecca717_0

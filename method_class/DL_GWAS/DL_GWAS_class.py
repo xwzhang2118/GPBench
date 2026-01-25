@@ -221,7 +221,7 @@ if __name__ == "__main__":
     handle = pynvml.nvmlDeviceGetHandleByIndex(0)
     args = parse_args()
 
-    all_species =  ['Horse/', 'Human/Amd/', 'Human/Amd/']
+    all_species =  ["Human/Sim/"]
     for species in all_species:
         args.species = species
         X, Y, nsamples, nsnp, names = load_data(args)

@@ -159,7 +159,7 @@ if __name__ == "__main__":
     args = parse_args()
     process = psutil.Process(os.getpid())
 
-    all_species = ['Human/Amd/', 'Human/BC/',"Horse/"]
+    all_species = ["Human/Sim/"]
     for sp in all_species:
         args.species = sp
         X, Y, nsamples, nsnp, names = load_data(args)

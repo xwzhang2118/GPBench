@@ -154,7 +154,7 @@ if __name__ == "__main__":
     args = parse_args()
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-    all_species =  ['Horse/','Human/Amd/', 'Human/BC/']
+    all_species =  ["Human/Sim/"]
 
     for species in all_species:
         args.species = species

@@ -111,7 +111,7 @@ if __name__ == "__main__":
     set_seed(42)
     torch.cuda.empty_cache()
     args = parse_args()
-    all_species = ['Human/Amd/', 'Human/BC/',"Horse/"]
+    all_species = ["Human/Sim/"]
     for i in range(len(all_species)):
         args.species = all_species[i]
         X, Y, nsamples, nsnp, names = load_data(args)

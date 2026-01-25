@@ -77,8 +77,8 @@ def parse_args():
     parser.add_argument('--methods', type=str, default='GBLUP_R/', help='Method name') 
     parser.add_argument('--species', type=str, default='')
     parser.add_argument('--phe', type=str, default='', help='Dataset name')
-    parser.add_argument('--data_dir', type=str, default='/home/common/xwzhang/Project/Benchmark/data/', help='Path to data directory')
-    parser.add_argument('--result_dir', type=str, default='/home/common/xwzhang/Project/Benchmark/result/', help='Path to result directory')
+    parser.add_argument('--data_dir', type=str, default='data/', help='Path to data directory')
+    parser.add_argument('--result_dir', type=str, default='result/', help='Path to result directory')
     args = parser.parse_args()
     return args
 
