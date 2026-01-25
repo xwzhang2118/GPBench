@@ -152,9 +152,7 @@ if __name__ == "__main__":
     
     args = parse_args()
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    all_species =['Cattle/', 'Chicken/', 'Chickpea/', 'Cotton/', 'Loblolly_Pine/',
-                'Maize/', 'Millet/', 'Mouse/', 'Pig/', 'Rapeseed/', 
-                'Rice/', 'Soybean/', 'Wheat/','Yeast/']
+    all_species =['Cotton/']
 
     for i in range(len(all_species)):
         args.species = all_species[i]

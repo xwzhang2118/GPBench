@@ -157,9 +157,7 @@ if __name__ == "__main__":
     device = torch.device("cuda:0")
     args = parse_args()
     process = psutil.Process(os.getpid())
-    all_species =['Cattle/', 'Chicken/', 'Chickpea/', 'Cotton/', 'Loblolly_Pine/',
-                   'Maize/', 'Millet/', 'Mouse/', 'Pig/', 'Rapeseed/', 
-                   'Rice/', 'Soybean/', 'Wheat/','Yeast/']
+    all_species =['Cotton/']
 
     for sp in all_species:
         args.species = sp

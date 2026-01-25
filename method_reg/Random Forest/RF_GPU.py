@@ -141,9 +141,7 @@ if __name__ == "__main__":
     set_seed(42)
     pynvml.nvmlInit()
     handle = pynvml.nvmlDeviceGetHandleByIndex(0)
-    all_species =['Cattle/', 'Chicken/', 'Chickpea/', 'Cotton/', 'Loblolly_Pine/',
-                   'Maize/', 'Millet/', 'Mouse/', 'Pig/', 'Rapeseed/', 
-                   'Rice/', 'Soybean/', 'Wheat/','Yeast/']
+    all_species =['Cotton/']
     
     args = parse_args()
     for i in range(len(all_species)):
