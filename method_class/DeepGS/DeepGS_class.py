@@ -32,7 +32,7 @@ def parse_args():
     return parser.parse_args()
 
 def load_data(args):
-    X = np.load(os.path.join(args.data_dir, args.species, 'genetype.npz'))["arr_0"]
+    X = np.load(os.path.join(args.data_dir, args.species, 'genotype.npz'))["arr_0"]
     Y = np.load(os.path.join(args.data_dir, args.species, 'phenotype.npz'))["arr_0"]
     names = np.load(os.path.join(args.data_dir, args.species, 'phenotype.npz'))["arr_1"]
     print("Samples:", X.shape[0], "SNPs:", X.shape[1])

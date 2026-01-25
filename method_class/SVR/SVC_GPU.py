@@ -46,7 +46,7 @@ def set_seed(seed=42):
     torch.manual_seed(seed)
 
 def load_data(args):
-    X = np.load(os.path.join(args.data_dir, args.species, 'genetype.npz'))["arr_0"]
+    X = np.load(os.path.join(args.data_dir, args.species, 'genotype.npz'))["arr_0"]
     Y = np.load(os.path.join(args.data_dir, args.species, 'phenotype.npz'))["arr_0"]
     print(f"Samples: {X.shape[0]}, SNPs: {X.shape[1]}")
     return X, Y

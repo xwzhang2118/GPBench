@@ -40,7 +40,7 @@ def set_seed(seed=42):
 
 
 def load_data(args):
-    x = np.load(os.path.join(args.data_dir, args.species, 'genetype.npz'))["arr_0"]
+    x = np.load(os.path.join(args.data_dir, args.species, 'genotype.npz'))["arr_0"]
     y = np.load(os.path.join(args.data_dir, args.species, 'phenotype.npz'))["arr_0"]
     names = np.load(os.path.join(args.data_dir, args.species, 'phenotype.npz'))["arr_1"]
     return x, y, x.shape[0], x.shape[1], names
