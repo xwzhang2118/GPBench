@@ -91,7 +91,7 @@ def run_nested_cv(args, data, label, nsnp, device):
         test_loader = DataLoader(test_data, args.batch_size, shuffle=False)
 
         model = GEFormer(nsnp=nsnp).to(device)
-        model.train_model(train_loader, valid_loader,args.epoch, args.learning_rate, args.patience, device)
+        model.train_model(train_loader, valid_loader,args.epoch, args.lr, args.patience, device)
         y_pred = model.predict(test_loader)
 
         mse = mean_squared_error(y_test, y_pred)

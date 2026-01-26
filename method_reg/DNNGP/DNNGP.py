@@ -24,6 +24,7 @@ def parse_args():
     parser.add_argument('--epoch', type=int, default=1000, help='Number of training rounds')
     parser.add_argument('--batch_size', type=int, default=32, help='Batch size')
     parser.add_argument('--lr', type=float, default=0.01, help='Learning rate')
+    parser.add_argument('--weight_decay', type=float, default=0.001, help='Weight decay')
     parser.add_argument('--patience', type=int, default=10, help='Patience for early stopping')
     parser.add_argument('--dropout1', type=float, default=0.5, help='Dropout rate for layer 1')
     parser.add_argument('--dropout2', type=float, default=0.5, help='Dropout rate for layer 2')
@@ -87,7 +88,7 @@ def run_nested_cv(args, data, label, nsnp, device):
         test_loader = DataLoader(test_data, args.batch_size, shuffle=False)
 
         model = DNNGP(nsnp, args.dropout1, args.dropout2)
-        model.train_model(train_loader, valid_loader, args.epoch, args.learning_rate, args.weight_decay, args.patience, device)
+        model.train_model(train_loader, valid_loader, args.epoch, args.lr, args.weight_decay, args.patience, device)
         y_pred = model.predict(test_loader)
 
         mse = mean_squared_error(y_test, y_pred)
