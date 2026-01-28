@@ -100,13 +100,17 @@ The `gp_agent_tool` is an LLM-powered analysis tool that performs comprehensive 
 {
   "llm": {
     "model": "gpt-4o-mini",
-    "api_key": "YOUR_API_KEY",
-    "base_url": "https://api.openai.com/v1"
+    "api_key": "YOUR_OPENAI_API_KEY",
+    "base_url": "https://api.openai.com/v1",
+    "timeout_seconds": 60,
+    "max_retries": 3
   },
   "codegen_llm": {
     "model": "gpt-4o-mini",
-    "api_key": "YOUR_API_KEY",
-    "base_url": "https://api.openai.com/v1"
+    "api_key": "YOUR_OPENAI_API_KEY",
+    "base_url": "https://api.openai.com/v1",
+    "timeout_seconds": 60,
+    "max_retries": 3
   },
   "multimodal_llm": {
     "model": "qwen-vl-max",
@@ -114,6 +118,14 @@ The `gp_agent_tool` is an LLM-powered analysis tool that performs comprehensive 
   }
 }
 ```
+
+**Important**: Please replace the `api_key` fields in the configuration file with your own API keys:
+- Replace `YOUR_OPENAI_API_KEY` in `llm` and `codegen_llm` with your OpenAI API key
+- Replace `YOUR_DASHSCOPE_API_KEY` in `multimodal_llm` with your Alibaba Cloud DashScope API key
+
+You can obtain API keys from the following URLs:
+- OpenAI API key: https://platform.openai.com/api-keys
+- Alibaba Cloud DashScope API key: https://dashscope.console.aliyun.com/apiKey
 
 2. **Additional Dependencies**: Install required packages for the tool:
 
