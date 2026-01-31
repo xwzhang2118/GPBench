@@ -82,7 +82,7 @@ def run_cv_eval(data, label, C, kernel, gamma, degree):
 
     return (np.mean(accs), np.mean(precs), np.mean(recs), np.mean(f1s))
 
-def main(data, label):
+def Hyperparameter(data, label):
     set_seed(42)
 
     def objective(trial):
@@ -104,7 +104,3 @@ def main(data, label):
     print("Successfully finished Optuna search")
 
     return study.best_params
-
-
-if __name__ == "__main__":
-    main()

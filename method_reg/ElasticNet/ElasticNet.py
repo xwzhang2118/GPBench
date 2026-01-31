@@ -16,7 +16,7 @@ def parse_args():
     parser.add_argument('--methods', type=str, default='ElasticNet/', help='Method name')
     parser.add_argument('--species', type=str, default='', help='Dataset name')
     parser.add_argument('--phe', type=str, default='', help='Phenotype name')
-    parser.add_argument('--data_dir', type=str, default='data/')
+    parser.add_argument('--data_dir', type=str, default='../../data/')
     parser.add_argument('--result_dir', type=str, default='result/')
     
     parser.add_argument('--alpha', type=float, default=0.5, help='Regularization strength')
@@ -107,7 +107,7 @@ if __name__ == "__main__":
             label = Y[:, j]
             label = np.nan_to_num(label, nan=np.nanmean(label))
             
-            best_params = ElasticNet_he.main(X, label)
+            best_params = ElasticNet_he.Hyperparameter(X, label)
             args.alpha = best_params['alpha']
             args.l1_ratio = best_params['l1_ratio']
             

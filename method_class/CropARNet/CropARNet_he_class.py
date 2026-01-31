@@ -116,7 +116,7 @@ def set_seed(seed=42):
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
 
-def main(data, label, nsnp):
+def Hyperparameter(data, label, nsnp):
     set_seed(42)
     le = LabelEncoder()
     label = le.fit_transform(label)
@@ -152,10 +152,3 @@ def main(data, label, nsnp):
     print("Best hyperparameters:", study.best_params)
     print("successfully")
     return study.best_params
-
-
-# =====================================================
-# 入口
-# =====================================================
-if __name__ == "__main__":
-    main()

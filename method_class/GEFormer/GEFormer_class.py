@@ -21,7 +21,7 @@ def parse_args():
     parser.add_argument('--methods', type=str, default='GEFormer/')
     parser.add_argument('--species', type=str, default='')
     parser.add_argument('--phe', type=str, default='')
-    parser.add_argument('--data_dir', type=str, default='data/')
+    parser.add_argument('--data_dir', type=str, default='../../data/')
     parser.add_argument('--result_dir', type=str, default='result/')
     
     parser.add_argument('--epoch', type=int, default=1000)
@@ -149,7 +149,7 @@ if __name__ == "__main__":
         label = le.fit_transform(label_raw)
         num_classes = len(le.classes_)
 
-        best_params = GEFormer_he_class.main(X, label, nsnp)
+        best_params = GEFormer_he_class.Hyperparameter(X, label, nsnp)
         args.learning_rate = best_params['learning_rate']
         args.batch_size = best_params['batch_size']
         args.patience = best_params['patience']

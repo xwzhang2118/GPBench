@@ -19,7 +19,7 @@ def parse_args():
     parser.add_argument('--methods', type=str, default='DeepGS/', help='Random seed')
     parser.add_argument('--species', type=str, default='', help='Species name')
     parser.add_argument('--phe', type=str, default='', help='Dataset name')
-    parser.add_argument('--data_dir', type=str, default='data/')
+    parser.add_argument('--data_dir', type=str, default='../../data/')
     parser.add_argument('--result_dir', type=str, default='result/')
 
     parser.add_argument('--num_round', type=int, default=6000, help='Number of training rounds')
@@ -144,7 +144,7 @@ if __name__ == "__main__":
             print("starting run " + args.methods + args.species + args.phe)
             label = Y[:, i]
             label = np.nan_to_num(label, nan=np.nanmean(label))
-            best_params = DeepGS_Hyperparameters.main(X, label, nsnp)
+            best_params = DeepGS_Hyperparameters.Hyperparameter(X, label, nsnp)
             args.learning_rate = best_params['learning_rate']
             args.batch_size = best_params['batch_size']
             args.momentum = best_params['momentum']

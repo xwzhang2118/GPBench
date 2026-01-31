@@ -16,7 +16,7 @@ from utils.models_locally_connected import LCLModel
 from utils.common import DataDimensions
 from sklearn.metrics import  mean_squared_error, mean_absolute_error, r2_score
 from scipy.stats import pearsonr
-from EIR_Hyperparameters import main
+from EIR_Hyperparameters import Hyperparameter
 os.environ['CUDA_VISIBLE_DEVICE'] = '0'
 
 def parse_args():
@@ -24,7 +24,7 @@ def parse_args():
     parser.add_argument('--methods', type=str, default='EIR/', help='Random seed')
     parser.add_argument('--species', type=str, default='', help='Species name')
     parser.add_argument('--phe', type=str, default='', help='Dataset name')
-    parser.add_argument('--data_dir', type=str, default='data/')
+    parser.add_argument('--data_dir', type=str, default='../../data/')
     parser.add_argument('--result_dir', type=str, default='result/')
 
     parser.add_argument('--epochs', type=int, default=1000, help='Number of training rounds')
@@ -239,7 +239,7 @@ if __name__ == '__main__':
             print("starting run " + args.methods + args.species + args.phe)
             label = Y[:, j]
             label = np.nan_to_num(label, nan=np.nanmean(label))
-            best_params = main(X, label, nsnp)
+            best_params = Hyperparameter(X, label, nsnp)
             args.learning_rate = best_params['learning_rate']
             args.batch_size = best_params['batch_size']
             args.patience = best_params['patience']

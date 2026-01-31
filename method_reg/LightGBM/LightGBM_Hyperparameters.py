@@ -41,7 +41,7 @@ def run_nested_cv(data, label, params):
     return np.mean(all_corr)
 
 
-def main(X, label):
+def Hyperparameter(X, label):
     set_seed(42)
     torch.cuda.empty_cache()
 
@@ -75,8 +75,3 @@ def main(X, label):
     print("best params:", study.best_params)
     print("successfully")
     return study.best_params
-
-
-if __name__ == "__main__":
-    main()
-

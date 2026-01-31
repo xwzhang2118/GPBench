@@ -17,7 +17,7 @@ def parse_args():
     parser.add_argument('--methods', type=str, default='ElasticNet/', help='Method name')
     parser.add_argument('--species', type=str, default='', help='Dataset name')
     parser.add_argument('--phe', type=str, default='', help='Phenotype name')
-    parser.add_argument('--data_dir', type=str, default='data/')
+    parser.add_argument('--data_dir', type=str, default='../../data/')
     parser.add_argument('--result_dir', type=str, default='result/')
     
     parser.add_argument('--C', type=float, default=1.0, help='Inverse of regularization strength')
@@ -118,7 +118,7 @@ if __name__ == "__main__":
         num_classes = len(le.classes_)
         print(f"Number of classes: {num_classes}")
 
-        best_params = ElasticNet_he_class.main(X, label)
+        best_params = ElasticNet_he_class.Hyperparameter(X, label)
         args.C = best_params['C']
         args.l1_ratio = best_params['l1_ratio']
         

@@ -155,7 +155,7 @@ def set_seed(seed=42):
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
 
-def main(data, label, nsnp, num_classes):
+def Hyperparameter(data, label, nsnp, num_classes):
     set_seed(42)
     
     def objective(trial):
@@ -182,6 +182,3 @@ def main(data, label, nsnp, num_classes):
     print("Best hyperparameters:", study.best_params)
     print("successfully")
     return study.best_params
-
-if __name__ == "__main__":
-    main()

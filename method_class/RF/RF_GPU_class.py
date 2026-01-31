@@ -27,7 +27,7 @@ def parse_args():
     parser.add_argument('--methods', type=str, default='RF/')
     parser.add_argument('--species', type=str, default='')
     parser.add_argument('--phe', type=str, default='')
-    parser.add_argument('--data_dir', type=str, default='data/')
+    parser.add_argument('--data_dir', type=str, default='../../data/')
     parser.add_argument('--result_dir', type=str, default='result/')
 
     parser.add_argument('--n_estimators', type=int, default=200)
@@ -142,7 +142,7 @@ if __name__ == "__main__":
         label = Y[:, 0]
         label = np.nan_to_num(label, nan=np.nanmedian(label))
 
-        best_params = RF_GPU_he_class.main(X, label)
+        best_params = RF_GPU_he_class.Hyperparameter(X, label)
         args.n_estimators = best_params['n_estimators']
         args.max_depth = best_params['max_depth']
 

@@ -123,7 +123,7 @@ def set_seed(seed=42):
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
 
-def main(data, label, use_gpu=True):
+def Hyperparameter(data, label, use_gpu=True):
     set_seed(42)
 
     # 目标函数，用于Optuna优化
@@ -161,8 +161,3 @@ def main(data, label, use_gpu=True):
     print("最佳参数:", study.best_params)
     print(f"优化完成 - 使用 {'GPU' if (use_gpu and torch.cuda.is_available()) else 'CPU'}")
     return study.best_params
-
-
-
-if __name__ == '__main__':
-    main()

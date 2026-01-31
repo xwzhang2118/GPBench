@@ -18,7 +18,7 @@ def parse_args():
     parser.add_argument('--methods', type=str, default='DeepCCR/', help='Random seed')
     parser.add_argument('--species', type=str, default='')
     parser.add_argument('--phe', type=str, default='', help='Dataset name')
-    parser.add_argument('--data_dir', type=str, default='data/')
+    parser.add_argument('--data_dir', type=str, default='../../data/')
     parser.add_argument('--result_dir', type=str, default='result/')
 
     parser.add_argument('--epoch', type=int, default=1000, help='Number of training rounds')
@@ -131,7 +131,7 @@ if __name__ == "__main__":
             print("starting run " + args.methods + args.species + args.phe)
             label = Y[:, j]
             label = np.nan_to_num(label, nan=np.nanmean(label))
-            best_params = DeepCCR_Hyperparameters.main(X, label, nsnp)
+            best_params = DeepCCR_Hyperparameters.Hyperparameter(X, label, nsnp)
             args.lr = best_params['learning_rate']
             args.patience = best_params['patience']
             args.batch_size = best_params['batch_size']

@@ -20,7 +20,7 @@ def parse_args():
     parser.add_argument('--methods', type=str, default='SoyDNGP/', help='Random seed')
     parser.add_argument('--species', type=str, default='Chicken/', help='Species name')
     parser.add_argument('--phe', type=str, default='', help='Dataset name')
-    parser.add_argument('--data_dir', type=str, default='data/')
+    parser.add_argument('--data_dir', type=str, default='../../data/')
     parser.add_argument('--result_dir', type=str, default='result/')
     
     parser.add_argument('--epochs', type=int, default=1000, help='Number of training rounds')
@@ -168,7 +168,7 @@ if __name__ == "__main__":
         label = le.fit_transform(label_raw)
         num_classes = len(le.classes_)
         
-        best_params = SoyDNGP_he_class.main(X, label, nsnp, num_classes)
+        best_params = SoyDNGP_he_class.Hyperparameter(X, label, nsnp, num_classes)
         args.learning_rate = best_params['learning_rate']
         args.batch_size = best_params['batch_size']
         args.patience = best_params['patience']

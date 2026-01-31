@@ -83,7 +83,7 @@ def parse_args():
     parser.add_argument('--methods', type=str, default='LightGBM/', help='Method name')
     parser.add_argument('--species', type=str, default='', help='Dataset name')
     parser.add_argument('--phe', type=str, default='', help='Phenotype')
-    parser.add_argument('--data_dir', type=str, default='data/')
+    parser.add_argument('--data_dir', type=str, default='../../data/')
     parser.add_argument('--result_dir', type=str, default='result/')
     
     parser.add_argument('--learning_rate', type=float, default=0.01)
@@ -213,7 +213,7 @@ if __name__ == "__main__":
             label = Y[:, j]
             label = np.nan_to_num(label, nan=np.nanmean(label))
 
-            best_params = LightGBM_Hyperparameters.main(X, label)
+            best_params = LightGBM_Hyperparameters.Hyperparameter(X, label)
             args.learning_rate = best_params['learning_rate']
             args.num_leaves = best_params['num_leaves']
             args.min_data_in_leaf = best_params['min_data_in_leaf']

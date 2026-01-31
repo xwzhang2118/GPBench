@@ -54,7 +54,7 @@ def set_seed(seed=42):
     random.seed(seed)
     np.random.seed(seed)
 
-def main(data, label):
+def Hyperparameter(data, label):
     set_seed(42)
     
     def objective(trial):
@@ -81,6 +81,3 @@ def main(data, label):
     print("best params:", study.best_params)
     print("successfully")
     return study.best_params
-
-if __name__ == '__main__':
-    main()

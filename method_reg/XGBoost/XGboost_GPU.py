@@ -19,7 +19,7 @@ def parse_args():
     parser.add_argument('--methods', type=str, default='XGBoost/', help='Method name')
     parser.add_argument('--species', type=str, default='Chickpea/GSTP012/', help='Species name')
     parser.add_argument('--phe', type=str, default='', help='Dataset name')
-    parser.add_argument('--data_dir', type=str, default='data/')
+    parser.add_argument('--data_dir', type=str, default='../../data/')
     parser.add_argument('--result_dir', type=str, default='result/')
 
     parser.add_argument('--learning_rate', type=float, default=0.1)
@@ -161,7 +161,7 @@ if __name__ == "__main__":
             label = Y[:, j]
             label = np.nan_to_num(label, nan=np.nanmean(label))
 
-            best_params = XGboost_Hyperparameters.main(X, label)
+            best_params = XGboost_Hyperparameters.Hyperparameter(X, label)
             args.learning_rate =best_params['learning_rate']
             args.n_estimators = best_params['n_estimators']
             args.max_depth = best_params['max_depth']

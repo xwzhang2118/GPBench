@@ -20,7 +20,7 @@ def parse_args():
     parser.add_argument('--methods', type=str, default='CropARNet/')
     parser.add_argument('--species', type=str, default='')
     parser.add_argument('--phe', type=str, default='')
-    parser.add_argument('--data_dir', type=str, default='data/')
+    parser.add_argument('--data_dir', type=str, default='../../data/')
     parser.add_argument('--result_dir', type=str, default='result/')
     
     parser.add_argument('--epochs', type=int, default=500)
@@ -165,7 +165,7 @@ if __name__ == "__main__":
         os.makedirs(result_dir, exist_ok=True)
         np.save(os.path.join(result_dir, 'label_mapping.npy'), le.classes_)
 
-        best_params = CropARNet_he_class.main(X, label, nsnp)
+        best_params = CropARNet_he_class.Hyperparameter(X, label, nsnp)
         args.learning_rate = best_params["learning_rate"]
         args.batch_size = best_params["batch_size"]
         args.weight_decay = best_params["weight_decay"]

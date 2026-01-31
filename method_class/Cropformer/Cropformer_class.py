@@ -25,7 +25,7 @@ def parse_args():
     parser.add_argument('--methods', type=str, default='Cropformer/', help='Method name')
     parser.add_argument('--species', type=str, default='', help='Dataset name')
     parser.add_argument('--phe', type=str, default='', help='Phenotype name')
-    parser.add_argument('--data_dir', type=str, default='data/', help='Data directory')
+    parser.add_argument('--data_dir', type=str, default='../../data/', help='Data directory')
     parser.add_argument('--result_dir', type=str, default='result/', help='Result directory')
     
     parser.add_argument('--lr', type=float, default=0.01, help='Learning rate')
@@ -275,7 +275,7 @@ if __name__ == '__main__':
         le = LabelEncoder()
         label = le.fit_transform(label)
 
-        best_params = cropformer_he_class.main(X, label)
+        best_params = cropformer_he_class.Hyperparameter(X, label)
         args.lr = best_params['learning_rate']
         args.num_head = best_params['heads']
         args.dropout = best_params['dropout']

@@ -134,7 +134,7 @@ def run_nested_cv_with_early_stopping(
 
     return np.mean(all_f1)
 
-def main(data, label, use_gpu=True):
+def Hyperparameter(data, label, use_gpu=True):
     set_seed(42)
 
     def objective(trial):
@@ -176,6 +176,3 @@ def main(data, label, use_gpu=True):
     print("Best params:", study.best_params)
 
     return study.best_params
-
-if __name__ == "__main__":
-    main()

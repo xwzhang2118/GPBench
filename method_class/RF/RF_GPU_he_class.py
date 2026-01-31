@@ -98,7 +98,7 @@ def set_seed(seed=42):
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(seed)
 
-def main(data, label, use_gpu=True):
+def Hyperparameter(data, label, use_gpu=True):
     set_seed(42)
 
     def objective(trial):
@@ -122,6 +122,3 @@ def main(data, label, use_gpu=True):
 
     print("best params:", study.best_params)
     return study.best_params
-
-if __name__ == '__main__':
-    main()

@@ -32,7 +32,7 @@ def parse_args():
     parser.add_argument('--methods', type=str, default='SVR/', help='Random seed')
     parser.add_argument('--species', type=str, default='', help='Dataset name')
     parser.add_argument('--phe', type=str, default='', help='Dataset name')
-    parser.add_argument('--data_dir', type=str, default='data/')
+    parser.add_argument('--data_dir', type=str, default='../../data/')
     parser.add_argument('--result_dir', type=str, default='result/')
 
     parser.add_argument('--C', type=float, default=0.001)
@@ -171,7 +171,7 @@ if __name__ == "__main__":
             label = Y[:, j]
             label = np.nan_to_num(label, nan=np.nanmean(label))
             
-            best_params = SVR_Hyperparameters.main(X, label)
+            best_params = SVR_Hyperparameters.Hyperparameter(X, label)
             args.C = best_params['C']
             args.epsilon = best_params['epsilon']
             args.kernel = best_params['kernel']

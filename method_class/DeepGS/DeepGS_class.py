@@ -20,7 +20,7 @@ def parse_args():
     parser.add_argument('--methods', type=str, default='DeepGS/')
     parser.add_argument('--species', type=str, default='Wheat/')
     parser.add_argument('--phe', type=str, default='')
-    parser.add_argument('--data_dir', type=str, default='data/')
+    parser.add_argument('--data_dir', type=str, default='../../data/')
     parser.add_argument('--result_dir', type=str, default='result/')
     
     parser.add_argument('--num_round', type=int, default=6000)
@@ -166,7 +166,7 @@ if __name__ == "__main__":
         label = le.fit_transform(label_raw)
         num_classes = len(le.classes_)
 
-        best_params = DeepGS_he_class.main(X, label, nsnp)
+        best_params = DeepGS_he_class.Hyperparameter(X, label, nsnp)
         args.learning_rate = best_params['learning_rate']
         args.batch_size = best_params['batch_size']
         args.momentum = best_params['momentum']

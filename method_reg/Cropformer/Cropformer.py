@@ -21,7 +21,7 @@ def parse_args():
     parser.add_argument('--methods', type=str, default='Cropformer/', help='Random seed')
     parser.add_argument('--species', type=str, default='Chickpea/GSTP012/', help='Dataset name')
     parser.add_argument('--phe', type=str, default='', help='Dataset name')
-    parser.add_argument('--data_dir', type=str, default='data/', help='Path to data directory')
+    parser.add_argument('--data_dir', type=str, default='../../data/', help='Path to data directory')
     parser.add_argument('--result_dir', type=str, default='result/', help='Path to result directory')
 
     parser.add_argument('--lr', type=float, default=0.01,help='Learning rate')
@@ -280,7 +280,7 @@ if __name__ == '__main__':
             print("starting run " + args.methods + args.species + args.phe)
             label = Y[:, j]
             label = np.nan_to_num(label, nan=np.nanmean(label))
-            best_params = Cropformer_Hyperparameters.main(X, label)
+            best_params = Cropformer_Hyperparameters.Hyperparameter(X, label)
             args.lr = best_params['learning_rate']
             args.num_head = best_params['heads']
             args.dropout = best_params['dropout']

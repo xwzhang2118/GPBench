@@ -20,7 +20,7 @@ def parse_args():
     parser.add_argument('--methods', type=str, default='DeepCCR/')
     parser.add_argument('--species', type=str, default='')
     parser.add_argument('--phe', type=str, default='')
-    parser.add_argument('--data_dir', type=str, default='data/')
+    parser.add_argument('--data_dir', type=str, default='../../data/')
     parser.add_argument('--result_dir', type=str, default='result/')
 
     parser.add_argument('--epoch', type=int, default=1000)
@@ -154,7 +154,7 @@ if __name__ == "__main__":
         os.makedirs(result_dir, exist_ok=True)
         np.save(os.path.join(result_dir, 'label_mapping.npy'), le.classes_)
 
-        best_params = DeepCCR_he_class.main(X, label, nsnp)
+        best_params = DeepCCR_he_class.Hyperparameter(X, label, nsnp)
         args.lr = best_params['learning_rate']
         args.patience = best_params['patience']
         args.batch_size = best_params['batch_size']

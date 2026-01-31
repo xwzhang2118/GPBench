@@ -20,7 +20,7 @@ def parse_args():
     parser.add_argument('--methods', type=str, default='MVP/')
     parser.add_argument('--species', type=str, default='Wheat/')
     parser.add_argument('--phe', type=str, default='')
-    parser.add_argument('--data_dir', type=str, default='data/')
+    parser.add_argument('--data_dir', type=str, default='../../data/')
     parser.add_argument('--result_dir', type=str, default='result/')
     
     parser.add_argument('--epochs', type=int, default=100)
@@ -162,7 +162,7 @@ if __name__ == "__main__":
             print("starting run " + args.methods + args.species + args.phe)
             label = Y[:, j]
             label = np.nan_to_num(label, nan=np.nanmean(label))
-            best_params = MVP_Hyperparameters.main(X, label, nsnp)
+            best_params = MVP_Hyperparameters.Hyperparameter(X, label, nsnp)
             args.learning_rate = best_params['learning_rate']
             args.batch_size = best_params['batch_size']
             args.patience = best_params['patience']

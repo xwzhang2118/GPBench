@@ -136,7 +136,7 @@ def run_nested_cv_with_early_stopping(
     return float(np.mean(all_acc)) if all_acc else 0.0
 
 
-def main(data, label, nsnp: int, num_classes: int):
+def Hyperparameter(data, label, nsnp: int, num_classes: int):
     set_seed(42)
 
     def objective(trial):
@@ -167,8 +167,3 @@ def main(data, label, nsnp: int, num_classes: int):
 
     print("Best hyperparameters:", study.best_params)
     return study.best_params
-
-
-if __name__ == "__main__":
-    main()
-

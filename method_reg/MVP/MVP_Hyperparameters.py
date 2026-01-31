@@ -97,7 +97,7 @@ def set_seed(seed=42):
     torch.backends.cudnn.benchmark = False
 
 
-def main(data, label, n_features):
+def Hyperparameter(data, label, n_features):
     set_seed(42)
     def objective(trial):
         learning_rate = trial.suggest_float("learning_rate", 1e-4, 0.1, log=True)
@@ -124,7 +124,3 @@ def main(data, label, n_features):
     print("best params:", study.best_params)
     print("successfully")
     return study.best_params
-
-
-if __name__ == "__main__":
-    main()

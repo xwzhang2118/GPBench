@@ -78,7 +78,7 @@ def run_cv_eval(data, label, params):
         np.mean(f1s)
     )
 
-def main(X, label):
+def Hyperparameter(X, label):
     set_seed(42)
     torch.cuda.empty_cache()
 
@@ -119,7 +119,3 @@ def main(X, label):
     print("Best macro-F1:", study.best_value)
 
     return study.best_params
-
-
-if __name__ == "__main__":
-    main()

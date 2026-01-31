@@ -29,7 +29,7 @@ def parse_args():
     parser.add_argument('--methods', type=str, default='SVR/')
     parser.add_argument('--species', type=str, default='')
     parser.add_argument('--phe', type=str, default='')
-    parser.add_argument('--data_dir', type=str, default='data/')
+    parser.add_argument('--data_dir', type=str, default='../../data/')
     parser.add_argument('--result_dir', type=str, default='result/')
 
     parser.add_argument('--C', type=float, default=1.0)
@@ -160,7 +160,7 @@ if __name__ == "__main__":
         args.species = species
         X, Y = load_data(args)        
         label = Y[:, 0]
-        best_params = SVC_GPU_he.main(X, label)
+        best_params = SVC_GPU_he.Hyperparameter(X, label)
         args.C = best_params['C']
         args.kernel = best_params['kernel']
         args.gamma = best_params['gamma']
