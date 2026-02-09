@@ -19,7 +19,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Argument parser")
     parser.add_argument('--methods', type=str, default='rrBLUP/', help='Method name')
     parser.add_argument('--species', type=str, default='', help='Species name')
-    parser.add_argument('--data_dir', type=str, default='../../data/')
+    parser.add_argument('--data_dir', type=str, default='data/')
     parser.add_argument('--result_dir', type=str, default='result/')
     return parser.parse_args()
 

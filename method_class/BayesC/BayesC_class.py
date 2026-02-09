@@ -20,7 +20,7 @@ def parse_args():
     parser.add_argument('--species', type=str, default='Human/', help='Species name')
     parser.add_argument('--phe', type=str, default='', help='Phenotype name')
     parser.add_argument('--task', type=str, default='classification', choices=['regression','classification'], help='Task: regression or classification')
-    parser.add_argument('--data_dir', type=str, default='../../data/', help='Path to data directory')
+    parser.add_argument('--data_dir', type=str, default='data/', help='Path to data directory')
     parser.add_argument('--result_dir', type=str, default='result/', help='Path to result directory')
     return parser.parse_args()
 

@@ -22,25 +22,119 @@ Project Website: [https://www.sdu-idea.cn/GPBench/](https://www.sdu-idea.cn/GPBe
 - `gp_agent_tool/`: LLM-powered dataset analysis and method recommendation tool (see [Dataset Analysis Tool](#dataset-analysis-tool-gp_agent_tool) section)
 - `environment.yml`: dependency file for creating a conda environment (recommended)
 
-## Environment Setup (recommended: conda)
-There is an `environment.yml` in the repository; it is recommended to create and activate a conda environment with it:
+## Environment Setup (3 Options)
 
-```bash
+GPBench provides three recommended ways to set up the runtime environment. Choose **one** that best fits your use case.
+
+------
+
+### Option 1 (Recommended): Conda via `environment.yml`
+
+This repository ships with an `environment.yml`. It is recommended to create and activate a Conda environment from it:
+
+```
 # On a machine with conda:
 conda env create -f environment.yml
 conda activate Benchmark
 ```
 
 Notes:
-- `environment.yml` contains most dependencies (including CUDA / cuDNN related packages and pip list) and is suitable for GPU-enabled environments (the file references CUDA 11.8 and matching RAPIDS/torch/cupy versions).
-- Ensure the target machine has an NVIDIA driver compatible with CUDA 11.8/12.
-- If you cannot use the environment file directly, you can install main dependencies into an existing Python environment as needed:
 
-```bash
+- `environment.yml` contains most dependencies (including CUDA / cuDNN related packages and pip list) and is suitable for GPU-enabled environments (the file may reference CUDA 11.8 and matching RAPIDS/torch/cupy versions).
+- Ensure the target machine has an NVIDIA driver compatible with your CUDA runtime.
+- If you cannot use `environment.yml` directly, you may install the main dependencies manually (simplified):
+
+```
 pip install -U numpy pandas scikit-learn torch torchvision optuna psutil xgboost lightgbm
 ```
 
-(Warning: the above is a simplified installation; some packages may need additional configuration on GPU systems or certain platforms.)
+> Warning: The simplified installation may require additional platform-specific steps on GPU systems (e.g., CUDA/CuPy/cuML compatibility).
+
+------
+
+### Option 2: Install from PyPI (`pip install GPBench`)
+
+If you only want to use GPBench as a Python package (without cloning this repo), you can install it directly via pip，follow this exact order:
+
+#### 1. Create Base Environment (Python & R)
+
+Create an isolated Conda environment with Python and R base installed:
+
+```
+conda create -n gpbench python=3.9 r-base=4.3.2 -c conda-forge -y
+conda activate gpbench
+```
+
+#### 2. Install GPBench Package
+
+Install the main package via pip. This pulls the basic Python dependencies:
+
+```
+pip install GPBench
+```
+
+#### 3. Install R Dependencies
+
+Install the required R libraries (`MASS`, `rrBLUP`, `BGLR`) via conda-forge:
+
+```
+conda install -c conda-forge r-mass r-rrblup r-bglr -y
+```
+
+#### 4. Install GPU Dependencies (CuPy / cuML)
+
+Install `cupy` and `cuml` matching your system's CUDA version.
+*Example (for CUDA 12.x):*
+
+```
+conda install -c rapidsai -c conda-forge -c nvidia cupy cuml cuda-version=12 -y
+```
+
+> **Note:** Change `cuda-version=12` to `11` if you are using an older driver.
+
+#### 5. Run Import Self-Test
+
+Finally, verify that the installation is complete and all backends are linking correctly:
+
+```
+python -c "import gpbench; gpbench.test()"
+```
+
+If successful, you will see: `✅ All imports passed successfully!`
+
+------
+
+### Option 3: Docker (Build from the provided `Dockerfile`)
+
+For a fully reproducible environment (recommended for deployment/CI), build a Docker image using the `Dockerfile` in this repository.
+
+#### 1. Build the Docker image
+
+From the repository root:
+
+```
+docker build -t gpbench:1.0 .
+```
+
+> **Note:** You may need `sudo` depending on your Docker installation and permissions.
+
+#### 2. Run the container
+
+Start an interactive shell (with GPU support):
+
+```
+docker run --gpus all -it --rm gpbench:1.0 bash
+```
+
+Or run a single command directly:
+
+```
+docker run --rm gpbench:1.0 python method_reg/BayesA/BayesA.py
+# or
+docker run --rm gpbench:1.0 python method_class/BayesA/BayesA_class.py
+```
+
+> **Tip:** If you intend to use a GPU, keep `--gpus all` in the `docker run` command.
 
 ## Data Format and Preparation
 - Each species folder should contain `genotype.npz` and `phenotype.npz`.

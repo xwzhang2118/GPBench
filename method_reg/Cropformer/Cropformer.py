@@ -21,7 +21,7 @@ def parse_args():
     parser.add_argument('--methods', type=str, default='Cropformer/', help='Random seed')
     parser.add_argument('--species', type=str, default='Chickpea/GSTP012/', help='Dataset name')
     parser.add_argument('--phe', type=str, default='', help='Dataset name')
-    parser.add_argument('--data_dir', type=str, default='../../data/', help='Path to data directory')
+    parser.add_argument('--data_dir', type=str, default='data/', help='Path to data directory')
     parser.add_argument('--result_dir', type=str, default='result/', help='Path to result directory')
 
     parser.add_argument('--lr', type=float, default=0.01,help='Learning rate')

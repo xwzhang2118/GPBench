@@ -20,7 +20,7 @@ def parse_args():
     parser.add_argument('--methods', type=str, default='RandomForest/', help='Method name')
     parser.add_argument('--species', type=str, default='Cattle/', help='Species name')
     parser.add_argument('--phe', type=str, default='', help='Dataset name')
-    parser.add_argument('--data_dir', type=str, default='../../data/')
+    parser.add_argument('--data_dir', type=str, default='data/')
     parser.add_argument('--result_dir', type=str, default='result/')
 
     parser.add_argument('--n_estimators', type=int, default=100)

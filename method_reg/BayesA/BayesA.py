@@ -16,7 +16,7 @@ def parse_args():
     parser.add_argument('--methods', type=str, default='BayesA/', help='Model name')
     parser.add_argument('--species', type=str, default='Cattle/', help='Species name')
     parser.add_argument('--phe', type=str, default='', help='Phenotype name')
-    parser.add_argument('--data_dir', type=str, default='../../data/', help='Path to data directory')
+    parser.add_argument('--data_dir', type=str, default='data/', help='Path to data directory')
     parser.add_argument('--result_dir', type=str, default='result/', help='Path to result directory')
     return parser.parse_args()
 

@@ -20,7 +20,7 @@ def parse_args():
     parser.add_argument('--methods', type=str, default='DeepGS/')
     parser.add_argument('--species', type=str, default='Wheat/')
     parser.add_argument('--phe', type=str, default='')
-    parser.add_argument('--data_dir', type=str, default='../../data/')
+    parser.add_argument('--data_dir', type=str, default='data/')
     parser.add_argument('--result_dir', type=str, default='result/')
     
     parser.add_argument('--num_round', type=int, default=6000)

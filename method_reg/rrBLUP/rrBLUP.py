@@ -18,7 +18,7 @@ def parse_args():
     parser.add_argument('--methods', type=str, default='rrBLUP/', help='Random seed')
     parser.add_argument('--species', type=str, default='', help='Species name/')
     parser.add_argument('--phe', type=str, default='', help='Dataset name')
-    parser.add_argument('--data_dir', type=str, default='../../data/')
+    parser.add_argument('--data_dir', type=str, default='data/')
     parser.add_argument('--result_dir', type=str, default='result/')
     args = parser.parse_args()
     return args

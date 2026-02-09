@@ -24,7 +24,7 @@ def parse_args():
     parser.add_argument('--methods', type=str, default='XGBoost/')
     parser.add_argument('--species', type=str, default='Horse/')
     parser.add_argument('--phe', type=str, default='')
-    parser.add_argument('--data_dir', type=str, default='../../data/')
+    parser.add_argument('--data_dir', type=str, default='data/')
     parser.add_argument('--result_dir', type=str, default='result/')
 
     parser.add_argument('--learning_rate', type=float, default=0.1)

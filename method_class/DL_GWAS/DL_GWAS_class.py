@@ -29,7 +29,7 @@ def parse_args():
     parser.add_argument("--methods", type=str, default="DL_GWAS/")
     parser.add_argument('--species', type=str, default='')
     parser.add_argument('--phe', type=str, default='')
-    parser.add_argument('--data_dir', type=str, default='../../data/')
+    parser.add_argument('--data_dir', type=str, default='data/')
     parser.add_argument('--result_dir', type=str, default='result/')
     
     parser.add_argument("--epochs", type=int, default=1000)
