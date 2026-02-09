@@ -26,8 +26,6 @@ Project Website: [https://www.sdu-idea.cn/GPBench/](https://www.sdu-idea.cn/GPBe
 
 GPBench provides three recommended ways to set up the runtime environment. Choose **one** that best fits your use case.
 
-------
-
 ### Option 1 (Recommended): Conda via `environment.yml`
 
 This repository ships with an `environment.yml`. It is recommended to create and activate a Conda environment from it:
@@ -49,8 +47,6 @@ pip install -U numpy pandas scikit-learn torch torchvision optuna psutil xgboost
 ```
 
 > Warning: The simplified installation may require additional platform-specific steps on GPU systems (e.g., CUDA/CuPy/cuML compatibility).
-
-------
 
 ### Option 2: Install from PyPI (`pip install GPBench`)
 
@@ -101,8 +97,6 @@ python -c "import gpbench; gpbench.test()"
 ```
 
 If successful, you will see: `✅ All imports passed successfully!`
-
-------
 
 ### Option 3: Docker (Build from the provided `Dockerfile`)
 
