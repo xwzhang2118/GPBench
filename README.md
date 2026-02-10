@@ -57,7 +57,7 @@ If you only want to use GPBench as a Python package (without cloning this repo),
 Create an isolated Conda environment with Python and R base installed:
 
 ```
-conda create -n gpbench python=3.9 r-base=4.3.2 -c conda-forge -y
+conda create -n gpbench python=3.10 r-base=4.3.2 -c conda-forge -y
 conda activate gpbench
 ```
 
